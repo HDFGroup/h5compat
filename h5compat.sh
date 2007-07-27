@@ -59,6 +59,22 @@ read18()
     fi
 }
 
+#### Run test ####
+
+RunTest()
+{
+    Test=$1
+
+    echo
+    echo "###########################  $Test  ###########################"
+    ./gen_compat.out
+    $h5cc18 tests/$Test
+    ./a.out
+    read16
+    read18
+}
+
+
 
 ##################  MAIN  ##################
 
@@ -66,30 +82,10 @@ read18()
 $h5cc16 -o gen_compat.out gen_compat.c
 if (($? == 0))
 then
-    echo
-    echo "###########################  t_newfile.c  ###########################"
-    ./gen_compat.out
-    $h5cc18 tests/t_newfile.c
-    ./a.out
-    read16
-    read18
-
-    echo
-    echo "###########################  t_newdata.c  ###########################"
-    ./gen_compat.out
-    $h5cc18 tests/t_newdata.c
-    ./a.out
-    read16
-    read18
-
-    echo
-    echo "###########################  t_newgroup.c  ###########################"
-    ./gen_compat.out
-    $h5cc18 tests/t_newgroup.c
-    ./a.out
-    read16
-    read18
-
+    RunTest t_newfile.c
+    RunTest t_newgroup.c
+    RunTest t_newdata.c
+    RunTest t_newlink.c
 else
     echo "messed up compiling gen_compat.c"
 fi
@@ -97,6 +93,8 @@ fi
 rm a.out
 rm gen_compat.out
 rm *.o
+rm errors.log
+rm compat.h5
 echo
 
 exit 0
