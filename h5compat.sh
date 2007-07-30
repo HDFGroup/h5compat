@@ -13,8 +13,8 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
-h5cc18="/mnt/scr1/plaird/hdf5/vdev/kagiso-1_8/hdf5/bin/h5cc"
-h5cc16="/mnt/scr1/plaird/hdf5/vdev/kagiso-1_6/hdf5/bin/h5cc"
+h5cc18="/mnt/scr1/pre-release/hdf5/v180/kagiso/bin/h5cc"
+h5cc16="/mnt/scr1/pre-release/hdf5/v16/kagiso/bin/h5cc"
 
 ####  Read with v1.6 ####
 
@@ -87,6 +87,7 @@ then
     RunTest t_newdata.c
     RunTest t_newlink.c
     RunTest t_newtype.c
+    RunTest t_newatts.c
 else
     echo "messed up compiling gen_compat.c"
 fi
@@ -95,7 +96,7 @@ rm a.out
 rm gen_compat.out
 rm *.o
 rm errors.log
-# rm compat.h5
+rm compat.h5
 echo
 
 exit 0

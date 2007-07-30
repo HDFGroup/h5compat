@@ -27,7 +27,6 @@ int main(int argc, char *argv[])
 
     hid_t fid;		/* file ID */
     hid_t gid;          /* group ID */
-    hid_t aid;          /* attribute ID */
     hid_t did;          /* dataset ID */
     hid_t sid;		/* dataspace ID */
     hid_t tid;   	/* datatype ID */
