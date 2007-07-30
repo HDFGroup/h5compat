@@ -86,6 +86,7 @@ then
     RunTest t_newgroup.c
     RunTest t_newdata.c
     RunTest t_newlink.c
+    RunTest t_newtype.c
 else
     echo "messed up compiling gen_compat.c"
 fi
@@ -94,7 +95,7 @@ rm a.out
 rm gen_compat.out
 rm *.o
 rm errors.log
-rm compat.h5
+# rm compat.h5
 echo
 
 exit 0

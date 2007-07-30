@@ -38,11 +38,7 @@ int main(int argc, char *argv[])
 
     hsize_t dims[2];
 
-    int data[2][2], dset2[10][10];
-    double d[10];
-
-    char buf[60];
-    int i, j;
+    int j;
     int i0, i1, i2, i3;
     hsize_t sdim, maxdim;
 
@@ -59,12 +55,16 @@ int main(int argc, char *argv[])
 
 /* =====  Main processing  ===== */
 
-   /* Create File */
+   /* Open File */
     fapl = H5Pcreate(H5P_FILE_ACCESS);
-    fid = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, fapl);
+    H5Pset_latest_format(fapl, TRUE);
+    fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
-   /* Create Group g2 */
-    gid = H5Gcreate (fid, "/g2", 0);
+   /* Open Group g2 */
+    gid = H5Gopen (fid, "/g2");
+
+   /* Remove link to datatype */
+    H5Ldelete(gid, "dtype1", H5P_DEFAULT);
 
    /* Create Datatype tid */
     dim[0] = dim[1] = dim[2] = dim[3] = 2;
@@ -86,17 +86,30 @@ int main(int argc, char *argv[])
     H5Tcommit(gid, "dtype1", tid );
 
     H5Tclose(tid);
+    H5Gclose(gid);
+    H5Fclose(fid);
+
+ /* =========================================== */
+
+   /* Open File */
+    fapl = H5Pcreate(H5P_FILE_ACCESS);
+    H5Pset_latest_format(fapl, FALSE);
+    fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
+
+   /* Open Group g2 */
+    gid = H5Gopen (fid, "/g2");
+
+   /* Save datatype as a named datatype */
     tid = H5Topen(gid, "dtype1");
+
     H5Gclose(gid);
 
  /* =========================================== */
 
-   /* Create Group g1 */
-    gid = H5Gcreate (fid, "/g1", 0);
-    H5Gclose(gid);
 
-   /* Create Group g1.1 */
-    gid = H5Gcreate (fid, "/g1/g1.1", 0);
+   /* Open Group g1.1 */
+    gid = H5Gopen (fid, "/g1/g1.1");
+    H5Ldelete(gid, "dset1", H5P_DEFAULT);
 
    /* Create Dataspace */
     sdim = 6;
@@ -141,76 +154,14 @@ int main(int argc, char *argv[])
     H5Tclose(tid);
     H5Gclose(gid);
 
-   /* Create Group g1.2 */
-    gid = H5Gcreate (fid, "/g1/g1.2", 0);
+   /* Open Group g1.2 */
+    gid = H5Gopen(fid, "/g1/g1.2");
+    H5Ldelete(gid, "hlink1", H5P_DEFAULT);
 
    /* Create Hard Link to dset1 */
     H5Glink( gid, H5G_LINK_HARD, "/g1/g1.1/dset1", "./hlink1" );
 
     H5Gclose(gid);
-
- /* =========================================== */
-
-   /* Create Group g3 */
-    gid = H5Gcreate (fid, "/g3", 0);
-    H5Gclose(gid);
-
- /* =========================================== */
-
-   /* Create Group g4 */
-    gid = H5Gcreate (fid, "/g4", 0);
-
-   /* Create Dataspace  */
-    dims[0] = dims[1] = 10;
-    sid = H5Screate_simple(2, dims, NULL);
-
-   /* Create Dataset dset2  */
-    did = H5Dcreate(gid, "dset2", H5T_NATIVE_INT, sid, H5P_DEFAULT);
-
-   /* Write to Dataset dset2 */
-    for (i = 0; i < 10; i++)
-        for (j = 0; j < 10; j++)
-            dset2[i][j] = j + 10 * i;
-    H5Dwrite(did, H5T_NATIVE_INT, H5S_ALL, H5S_ALL, H5P_DEFAULT, dset2);
-
-   /* Close some things */
-    H5Sclose(sid);
-
-   /* Add attributes to dset2 */
-    for (i = 0; i < 10; i++){
-        dims[0] = 10;
-        sprintf(buf, "attr%05d", i);
-        sid = H5Screate_simple(1, dims, NULL);
-        aid = H5Acreate (did, buf, H5T_NATIVE_CHAR, sid, H5P_DEFAULT);
-        H5Awrite(aid, H5T_NATIVE_CHAR, buf);
-        H5Sclose(sid);
-        H5Aclose(aid);
-    }
-    
-   /* Close some things */
-    H5Dclose(did);
-    H5Gclose(gid);
-
- /* =========================================== */
-
-   /* Open Group g3 */
-    gid = H5Gopen (fid, "/g3");
-
-   /* Create Hard Link to dset2 */
-    H5Glink( gid, H5G_LINK_HARD, "/g4/dset2", "./hlink2" );
-
-    H5Gclose(gid);
-
- /* =========================================== */
-
-   /* Create Group g5 */
-    gid = H5Gcreate (fid, "/g5", 0);
-
-   /* Create Hard Link to dset2 */
-    H5Glink( gid, H5G_LINK_SOFT, "/g4/dset2", "./slink1" );
-
-    H5Gclose(gid);
-
 
    /* Close File */
     H5Fclose(fid);
