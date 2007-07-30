@@ -164,7 +164,6 @@ int check(int ret, char type[], char name[15], char message[], FILE *fp)
 
 int main(void)
 {
-    printf("hi");
     FILE *fp;
 
     hid_t fid;		/* file ID */
