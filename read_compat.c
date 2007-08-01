@@ -177,7 +177,7 @@ int main(void)
     int I;
 
 /* =====  Main processing  ===== */
-    fp = fopen(FILEPATH, "w");
+    fp = fopen(FILEPATH, "a");
 
 
     if(check( check_file(&fid), "file", "file", NULL, fp) >=0)
