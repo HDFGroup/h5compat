@@ -1,25 +1,29 @@
 #! /bin/sh
 
+#
 #  This file:  compat.sh
 # Written by:  Peter Laird
-#       Date:  July 16, 2007
+#       Date:  Aug 1, 2007
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#                                                                       #
-# This script will:                                                     #
-#	- run compatibility tests using 2 different libraries		#
-#                                                                       #
-#                                                                       #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#                                                                       	#
+# This script will:                                                     	#
+#	- run compatibility tests using 2 different libraries			#
+#           - gen_compat.c is run using the v1.6 library to create compat.h5	#
+#	    - a test is run using the v1.8 library to modify compat.h5		#
+#	    - read_compat.c is run using the v1.6 library to read compat.h5	#
+#                                                                       	#
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
+# Define libraries to use
 h5cc18="/mnt/scr1/pre-release/hdf5/v180/kagiso/bin/h5cc"
 h5cc16="/mnt/scr1/pre-release/hdf5/v16/kagiso/bin/h5cc"
 
+# When an error occurs, this file is filled with the error information 
 ErrorFile="CompatibilityError.log"
 
 ####  Read with v1.6 ####
-
 read16()
 {
     $h5cc16 read_compat.c
@@ -35,7 +39,6 @@ read16()
 
 
 #### Read with v1.8 ####
-
 read18()
 {
     $h5cc18 read_compat.c
@@ -52,14 +55,46 @@ read18()
 }
 
 #### Check Errors ####
-
 CheckErrors()
 {
     expected=$1"-expected"
+
+   # Check if output from reading file is the same as expected output
     cmp -s errors.log tests/expected/$expected
-    if (($? == 0))
+    ((ret= $? ))
+    if ((ret == 0))
+
+     # Output matched expected output
     then
 	echo "Test ran as expected"
+
+     # Output file doesn't exist
+    elif ((ret == 2))
+    then
+	 # with the -a flag a new expected file will be created
+	if [[ $AddExpected == "on" ]]
+	then
+	    echo "Expected output was not found."
+	    echo "Adding current output as expected output:"
+	    echo
+	    cat errors.log | tee tests/expected/$expected
+	    echo
+	    echo
+	 # without the -a flag, and error will occur
+	else
+	    echo "!!! Error: There was an error running this test !!!"
+            echo " The file containing expected output did not exist"
+            echo
+
+            rm a.out
+            rm gen_compat.out
+            rm *.o
+            rm compat.h5
+	    rm errors.log
+	    exit 1
+	fi
+
+     # Output did not match expected output
     else
 	echo "!!! Error: There was an error running this test !!!"
 	echo "          check ./CompatibilityError.log"
@@ -100,7 +135,6 @@ CheckErrors()
 }
 
 #### Run test ####
-
 RunTest()
 {
     Test=$1".c"
@@ -120,7 +154,18 @@ RunTest()
 
 ##################  MAIN  ##################
 
+if (( $# > 0 ))
+then
+    if [[ $1 == "-a" ]]
+    then
+	AddExpected="on"
+    fi
+fi 
+
+# Compile gen_compat.c with v1.6
 $h5cc16 -o gen_compat.out gen_compat.c
+
+# Run tests
 if (($? == 0))
 then
     RunTest t_newfile
@@ -131,10 +176,13 @@ then
     RunTest t_newatts
     RunTest t_latest_mod_data
     RunTest t_latest_mod_attr
+    RunTest t_latest_more_groups
+    RunTest t_index_link
 else
     echo "messed up compiling gen_compat.c"
 fi
 
+# Cleanup
 rm a.out
 rm gen_compat.out
 rm *.o
