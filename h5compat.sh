@@ -20,6 +20,31 @@
 h5cc18="/mnt/scr1/pre-release/hdf5/v180/kagiso/bin/h5cc"
 h5cc16="/mnt/scr1/pre-release/hdf5/v16/kagiso/bin/h5cc"
 
+# Definitions
+initfname=.h5compatrc		# personal initialization file
+
+# Look for the personal initialization file in $PWD, then in $HOME.
+# If none found, keep preset values.
+if [ -r ./$initfname ]; then
+    echo scan in ./$initfname
+    . ./$initfname
+elif [ -r $HOME/$initfname ]; then
+    echo scan in $HOME/$initfname
+    . $HOME/$initfname
+else
+    echo No personal initialization file found.  Keep preset values.
+fi
+
+# Check definitions
+if [ ! -x $h5cc16 ]; then
+    echo "h5cc16($h5cc16) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc18 ]; then
+    echo "h5cc18($h5cc18) not found or not executable.  Abort"
+    exit 1
+fi
+
 # When an error occurs, this file is filled with the error information 
 ErrorFile="CompatibilityError.log"
 
