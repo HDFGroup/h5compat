@@ -16,6 +16,19 @@
        (dset1)
 ================================================*/
 
+
+/* Prototype definitions */
+int check_file(hid_t *fid);
+int check_group(hid_t *gid, hid_t fid, const char *group_name);
+int check_dtype(hid_t *tid, hid_t gid, const char *type_name);
+int check_chgroup(hid_t *gid2, hid_t gid, const char *group_name);
+int check_dset1(hid_t *did, hid_t gid2, const char *link_name);
+int check_data1(hid_t did);
+int check_dset2(hid_t *did, hid_t gid, const char *link_name);
+int check_data2(hid_t did);
+int check_attr(hid_t did, const char *attr_name);
+int check(int ret, const char *type, const char *name, const char *message, FILE *fp);
+
 /* file */
 
 int check_file(hid_t *fid)
@@ -26,7 +39,7 @@ int check_file(hid_t *fid)
 
 /* group */
 
-int check_group(hid_t *gid, hid_t fid, char group_name[])
+int check_group(hid_t *gid, hid_t fid, const char *group_name)
 {
     if((*gid = H5Gopen(fid, group_name)) <0) return -1;
     return 0;
@@ -34,7 +47,7 @@ int check_group(hid_t *gid, hid_t fid, char group_name[])
 
 /* datatype */
 
-int check_dtype(hid_t *tid, hid_t gid, char type_name[])
+int check_dtype(hid_t *tid, hid_t gid, const char *type_name)
 {
     if((*tid = H5Topen(gid, type_name)) <0) return -1;
     return 0;
@@ -42,7 +55,7 @@ int check_dtype(hid_t *tid, hid_t gid, char type_name[])
 
 /* child group */
 
-int check_chgroup(hid_t *gid2, hid_t gid, char group_name[])
+int check_chgroup(hid_t *gid2, hid_t gid, const char *group_name)
 {
     if((*gid2 = H5Gopen(gid, group_name)) <0) return -1;
     return 0;
@@ -50,7 +63,7 @@ int check_chgroup(hid_t *gid2, hid_t gid, char group_name[])
 
 /* dataset dset1 (for any link to dset1) */
 
-int check_dset1(hid_t *did, hid_t gid2, char link_name[])
+int check_dset1(hid_t *did, hid_t gid2, const char *link_name)
 {
     if((*did = H5Dopen(gid2, link_name)) <0) return -1;
     return 0;
@@ -70,9 +83,7 @@ int check_data1(hid_t did)
     int j, i0, i1, i2, i3;
     int idx[4] = {0,1,2,3};
     const int perm[4] = {0,1,2,3};
-    hsize_t sdim;
-    sdim = 6;
-
+    hsize_t sdim = 6;
     hid_t tid;
 
     if((tid = H5Dget_type(did)) <0) return -1;
@@ -107,7 +118,7 @@ int check_data1(hid_t did)
 
 /* dataset dset2 (for any link to dset2) */
 
-int check_dset2(hid_t *did, hid_t gid, char link_name[])
+int check_dset2(hid_t *did, hid_t gid, const char *link_name)
 {
     if((*did = H5Dopen(gid, link_name)) <0) return -1;
 
@@ -134,7 +145,7 @@ int check_data2(hid_t did)
 
 /* attr (for any attr) */
 
-int check_attr(hid_t did, char attr_name[])
+int check_attr(hid_t did, const char *attr_name)
 {
     hid_t aid;
     char buf[10];
@@ -150,7 +161,7 @@ int check_attr(hid_t did, char attr_name[])
 
 /* Print outcome to file */
 
-int check(int ret, char type[], char name[15], char message[], FILE *fp)
+int check(int ret, const char *type, const char *name, const char *message, FILE *fp)
 {
     if (ret < 0){
 	fprintf(fp, "Error: %s %s %s\n", type, name, message);
