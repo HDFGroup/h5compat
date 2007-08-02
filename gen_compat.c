@@ -21,7 +21,7 @@
        (dset1)
 ================================================*/
 
-int main(int argc, char *argv[])
+int main(void)
 {
 /* =====  Variables  ===== */
 
@@ -38,8 +38,7 @@ int main(int argc, char *argv[])
 
     hsize_t dims[2];
 
-    int data[2][2], dset2[10][10];
-    double d[10];
+    int dset2[10][10];
 
     char buf[60];
     int i, j;
