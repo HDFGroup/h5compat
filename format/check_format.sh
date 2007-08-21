@@ -1,7 +1,7 @@
 #! /bin/sh
 
 #
-#  This file:  compat.sh
+#  This file:  check_format.sh
 # Written by:  Peter Laird
 #       Date:  Aug 1, 2007
 #
