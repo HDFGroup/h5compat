@@ -134,7 +134,7 @@ CheckErrors()
      # Output did not match expected output
     else
 	echo "!!! Error: There was an error running this test !!!"
-	echo "          check ./CompatibilityError.log"
+	echo "          check $ErrorFile"
 	echo
 
 
@@ -146,15 +146,13 @@ CheckErrors()
         echo "Difference in output:" >> $ErrorFile
 	diff errors.log tests/expected/$expected >> $ErrorFile
 
-        echo >> $ErrorFile
-        cat tests/expected/$expected >> $ErrorFile
 	echo >> $ErrorFile 
 	echo "###########################################################" >> $ErrorFile
 	echo >> $ErrorFile
 	echo "Expected Output:" >> $ErrorFile
-
 	echo >> $ErrorFile
 	cat tests/expected/$expected >> $ErrorFile
+
 	echo >> $ErrorFile
         echo "###########################################################" >> $ErrorFile
         echo >> $ErrorFile
