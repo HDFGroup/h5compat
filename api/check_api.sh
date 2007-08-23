@@ -29,20 +29,161 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
+##################################
+# Script Functions for later use #
+##################################
+
+
+# Print a line-line message left justified in a field of 70 characters
+# beginning with the word "Testing".
+#
+TESTING() {
+   SPACES="                                                               "
+   echo "Testing $* $SPACES" | cut -c1-70 | tr -d '\012'
+}
+
+# Clean up any files produced
+#
+CLEANUP()
+{
+    rm *.out
+    rm *.o
+    rm -f *.h5
+}
+
+# Check output from running test program
+#
+CHECK()
+{
+    # Set the same of the actual and expected output files
+    expected=$1"-expected-"$2
+    actual=$1".out"
+
+    # Check if output from test program is the same as expected output
+    cmp -s $actual expected/$expected
+    ((ret = $? ))
+
+    # Check if output didn't match expected output
+    if ((ret != 0)); then
+	
+        # Output file doesn't exist
+        if ((ret == 2)); then
+            # with the -a flag a new expected file will be created
+            if [[ $AddExpected == "on" ]]; then
+                echo "Expected output was not found."
+                echo "Adding current output as expected output:"
+                echo
+                cat $actual | tee expected/$expected
+                echo
+                echo
+            # without the -a flag, and error will occur
+            else
+                echo "*FAILED*"
+                echo "!!! Error: There was an error running this test !!!"
+                echo " The file containing expected output did not exist"
+                echo
+
+                CLEANUP
+                exit 1
+            fi
+
+         # Output did not match expected output
+        else
+            echo "*FAILED*"
+            echo "!!! Error: There was an error running this test !!!"
+            echo
+
+            echo
+            echo "###########################################################"
+            echo
+            echo "Difference in output:"
+            diff $actual expected/$expected
+
+            echo
+            echo "###########################################################"
+            echo
+            echo "Expected Output:"
+            echo
+            cat expected/$expected
+
+            echo
+            echo "###########################################################"
+            echo
+            echo "Output from test:"
+            echo
+            cat $actual
+
+            CLEANUP
+            exit 1
+        fi
+    fi
+}
+
+# Build & run test with compiler script
+#
+BUILD()
+{
+    $1 $2.c
+    if (($? == 0)); then
+#        echo "Testing with: $1"
+        ./a.out 2 > $2.out
+#        ./a.out
+        if (($? != 0)); then
+            echo "*FAILED*"
+            echo "error running $2 with $1"
+            exit 1
+        else
+            CHECK $2 $3
+        fi
+    else
+        echo "*FAILED*"
+        echo "error compiling $2.c with $1"
+        exit 1
+    fi
+    echo " PASSED"
+}
+
+# Build test program with 1.6.x and 1.8.x libraries
+#
+TEST()
+{
+    echo
+    echo "################# Testing $1 #################"
+
+    TESTING "actual 1.6.x library"
+    BUILD $h5cc16 $1 "v16"
+
+    TESTING "1.8.x library in 1.6.x compatibility mode"
+    BUILD $h5cc18 $1 "v18"
+}
+
+
+##################  INITIALIZE SCRIPT INFO  ##################
+
+
 # Define compile scripts to use
 h5cc18="/mnt/scr1/pre-release/hdf5/v180/kagiso/bin/h5cc"
 h5cc16="/mnt/scr1/pre-release/hdf5/v16/kagiso/bin/h5cc"
+
+# Parse command line arguments
+if (( $# > 0 )); then
+    if [[ $1 == "-a" ]]; then
+	AddExpected="on"
+    fi
+fi 
 
 # Definitions
 initfname=.h5compatrc		# personal initialization file
 
 # Look for the personal initialization file in $PWD, then in $HOME.
 # If none found, keep preset values.
+echo
+echo "Looking for config file ($initfname):"
 if [ -r ./$initfname ]; then
-    echo scan in ./$initfname
+    echo Found ./$initfname
     . ./$initfname
 elif [ -r $HOME/$initfname ]; then
-    echo scan in $HOME/$initfname
+    echo Found $HOME/$initfname
     . $HOME/$initfname
 else
     echo No personal initialization file found.  Keep preset values.
@@ -58,46 +199,21 @@ if [ ! -x $h5cc18 ]; then
     exit 1
 fi
 
-
-# Build test with compiler script and run test
-build()
-{
-    $1 $2.c
-    if (($? == 0))
-    then
-        echo "========= Testing with $1 ========="
-        ./a.out 2>/dev/null
-        if (($? != 0))
-        then
-            echo "error running $2 with $1"
-            exit 1
-        fi
-    else
-        echo "error compiling $2.c with $1"
-        exit 1
-    fi
-}
-
-#### Run test ####
-RunTest()
-{
-    echo
-    echo "################# Testing $1 #################"
-    build $h5cc16 $1
-    build $h5cc18 $1
-}
-
+echo
+echo "Testing scripts used:"
+echo "h5cc16 = $h5cc16"
+echo "h5cc18 = $h5cc18"
 
 
 ##################  MAIN  ##################
 
 # Run tests
-RunTest test_h5e
+TEST test_h5e
 
-# Cleanup
-rm a.out
-rm *.o
-rm *.h5
+
+##################  CLEANUP  ##################
+
+CLEANUP
 echo
 
 exit 0
