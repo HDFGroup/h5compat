@@ -150,11 +150,14 @@ TEST()
     TESTING "actual 1.6.x library"
     BUILD $h5cc16 $1 "v16"
 
+    TESTING "normal 1.8.x library build"
+    BUILD $h5cc18 $1 "v18-actual"
+
     TESTING "1.8.x library built in 1.6.x compatibility mode"
-    BUILD $h5cc18compat $1 "v18"
+    BUILD $h5cc18compat $1 "v18-compat"
 
     TESTING "normal 1.8.x library build, with 1.6.x compatibility macro"
-    BUILD "$h5cc18 -DH5_USE_16_API" $1 "v18"
+    BUILD "$h5cc18 -DH5_USE_16_API" $1 "v18-macro"
 }
 
 # Build test program with different API routine versions overridden
