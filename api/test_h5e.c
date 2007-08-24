@@ -67,6 +67,19 @@ init_array(void)
     errors[4].str = "str5";
 }
 
+#if (defined(H5E_auto_t_vers) && H5E_auto_t_vers > 1) || \
+        (defined(H5Eget_auto_vers) && H5Eget_auto_vers > 1) || \
+        (defined(H5Eset_auto_vers) && H5Eset_auto_vers > 1)
+static herr_t
+auto_error(hid_t estack_id, void *client_data)
+{
+    /* Shut compiler up */
+    estack_id = estack_id;
+    client_data = client_data;
+
+    return(0);
+}
+#else /* H5E_auto_t_vers */
 static herr_t
 auto_error(void *client_data)
 {
@@ -75,7 +88,22 @@ auto_error(void *client_data)
 
     return(0);
 }
+#endif /* H5E_auto_t_vers */
 
+#if defined(H5Ewalk_vers) && H5Ewalk_vers > 1
+static herr_t
+walk_error(unsigned n, const H5E_error_t *err_desc, void *client_data)
+{
+    /* Shut compiler up */
+    client_data = client_data;
+
+    /* Check for correct error on stack */
+    if((unsigned)n != (err_desc->line - 1))
+        return(-1);
+    else
+        return(0);
+}
+#else /* H5Ewalk_vers */
 static herr_t
 walk_error(int n, H5E_error_t *err_desc, void *client_data)
 {
@@ -88,7 +116,10 @@ walk_error(int n, H5E_error_t *err_desc, void *client_data)
     else
         return(0);
 }
+#endif /* H5Ewalk_vers */
 
+
+#define MAKE_STR(x) #x
 
 int
 main(int argc, const char *argv[])
@@ -104,24 +135,69 @@ main(int argc, const char *argv[])
     /* Initialize error array */
     init_array();
 
+    /* Dump versions for API symbols tested, if library supports versioning */
+#if H5_VERS_MINOR >= 8
+    printf("H5E_auto_t_vers = %d\n", H5E_auto_t_vers);
+    printf("H5Eclear_vers = %d\n", H5Eclear_vers);
+    printf("H5Eget_auto_vers = %d\n", H5Eget_auto_vers);
+    printf("H5Eprint_vers = %d\n", H5Eprint_vers);
+    printf("H5Epush_vers = %d\n", H5Epush_vers);
+    printf("H5Eset_auto_vers = %d\n", H5Eset_auto_vers);
+    printf("H5Ewalk_vers = %d\n", H5Ewalk_vers);
+#endif /* H5_VERS_MINOR >= 8 */
+
     /* Set up for pushing our error on stack */
+#if defined(H5Eclear_vers) && H5Eclear_vers > 1
+    if(H5Eclear(H5E_DEFAULT) < 0) goto error;
+#else /* H5Eclear_vers */
     if(H5Eclear() < 0) goto error;
+#endif /* H5Eclear_vers */
+#if (defined(H5E_auto_t_vers) && H5E_auto_t_vers > 1) || \
+        (defined(H5Eget_auto_vers) && H5Eget_auto_vers > 1) || \
+        (defined(H5Eset_auto_vers) && H5Eset_auto_vers > 1)
+    if(H5Eget_auto(H5E_DEFAULT, &efunc, &edata) < 0) goto error;
+    if(H5Eset_auto(H5E_DEFAULT, auto_error, NULL) < 0) goto error;
+#else /* H5E_auto_t_vers */
     if(H5Eget_auto(&efunc, &edata) < 0) goto error;
     if(H5Eset_auto(auto_error, NULL) < 0) goto error;
+#endif /* H5E_auto_t_vers */
 
+#if defined(H5Epush_vers) && H5Epush_vers > 1
+    /* Push errors on stack */
+    for(u = 0; u < (sizeof(errors) / sizeof(errors[0])); u++)
+        if(H5Epush(H5E_DEFAULT, errors[u].file, errors[u].func, errors[u].line,
+                H5E_ERR_CLS_g, errors[u].maj, errors[u].min, errors[u].str) < 0) goto error;
+#else /* H5Epush_vers */
     /* Push errors on stack */
     for(u = 0; u < (sizeof(errors) / sizeof(errors[0])); u++)
         if(H5Epush(errors[u].file, errors[u].func, errors[u].line, errors[u].maj,
                 errors[u].min, errors[u].str) < 0) goto error;
+#endif /* H5Epush_vers */
 
+#if defined(H5Ewalk_vers) && H5Ewalk_vers > 1
+    /* Walk the error stack */
+    if(H5Ewalk(H5E_DEFAULT, H5E_WALK_UPWARD, walk_error, NULL) < 0) goto error;
+#else /* H5Ewalk_vers */
     /* Walk the error stack */
     if(H5Ewalk(H5E_WALK_UPWARD, walk_error, NULL) < 0) goto error;
+#endif /* H5Ewalk_vers */
 
+#if defined(H5Eprint_vers) && H5Eprint_vers > 1
+    /* Print the error stack */
+    if(H5Eprint(H5E_DEFAULT, stdout) < 0) goto error;
+#else /* H5Eprint_vers */
     /* Print the error stack */
     if(H5Eprint(stdout) < 0) goto error;
+#endif /* H5Eprint_vers */
 
     /* Restore previous error reporting reoutine */
+#if (defined(H5E_auto_t_vers) && H5E_auto_t_vers > 1) || \
+        (defined(H5Eget_auto_vers) && H5Eget_auto_vers > 1) || \
+        (defined(H5Eset_auto_vers) && H5Eset_auto_vers > 1)
+    if(H5Eset_auto(H5E_DEFAULT, efunc, edata) < 0) goto error;
+#else /* H5E_auto_t_vers */
     if(H5Eset_auto(efunc, edata) < 0) goto error;
+#endif /* H5E_auto_t_vers */
 
     return(0);
 
