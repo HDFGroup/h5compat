@@ -119,8 +119,6 @@ walk_error(int n, H5E_error_t *err_desc, void *client_data)
 #endif /* H5Ewalk_vers */
 
 
-#define MAKE_STR(x) #x
-
 int
 main(int argc, const char *argv[])
 {

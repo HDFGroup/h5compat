@@ -196,6 +196,21 @@ TEST_H5E()
     TESTAPI test_h5e H5Eprint2 "-DH5_USE_16_API -DH5Eprint_vers=2"
 }
 
+# Runs tests for H5G API
+#
+TEST_H5G()
+{
+    echo
+    echo "################# Testing H5G API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5g
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI test_h5g H5Gcreate1 "-DH5Gcreate_vers=1"
+    TESTAPI test_h5g H5Gcreate2 "-DH5_USE_16_API -DH5Gcreate_vers=2"
+}
+
 
 ##################  INITIALIZE SCRIPT INFO  ##################
 
@@ -253,6 +268,7 @@ echo "h5cc16 = $h5cc16"
 ##################  MAIN  ##################
 
 TEST_H5E
+TEST_H5G
 
 ##################  CLEANUP  ##################
 
