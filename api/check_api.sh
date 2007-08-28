@@ -209,6 +209,8 @@ TEST_H5G()
     # Run tests for overriding version of individual API routines
     TESTAPI test_h5g H5Gcreate1 "-DH5Gcreate_vers=1"
     TESTAPI test_h5g H5Gcreate2 "-DH5_USE_16_API -DH5Gcreate_vers=2"
+    TESTAPI test_h5g H5Gopen1 "-DH5Gopen_vers=1"
+    TESTAPI test_h5g H5Gopen2 "-DH5_USE_16_API -DH5Gopen_vers=2"
 }
 
 

@@ -32,15 +32,31 @@ main(int argc, const char *argv[])
     argc = argc;
     argv = argv;
 
+    /* Dump versions for API symbols tested, if library supports versioning */
+#if H5_VERS_MINOR >= 8
+    printf("H5Gcreate_vers = %d\n", H5Gcreate_vers);
+    printf("H5Gopen_vers = %d\n", H5Gopen_vers);
+#endif /* H5_VERS_MINOR >= 8 */
+
     /* Create file */
     if((fid = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
 
     /* Create group */
 #if defined(H5Gcreate_vers) && H5Gcreate_vers > 1
-    if((gid = H5Gcreate2(fid, GROUPNAME, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
+    if((gid = H5Gcreate(fid, GROUPNAME, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
 #else /* H5Gcreate_vers */
     if((gid = H5Gcreate(fid, GROUPNAME, (size_t)0)) < 0) goto error;
 #endif /* H5Gcreate_vers */
+
+    /* Close group */
+    if(H5Gclose(gid) < 0) goto error;
+
+    /* Re-open group */
+#if defined(H5Gopen_vers) && H5Gopen_vers > 1
+    if((gid = H5Gopen(fid, GROUPNAME, H5P_DEFAULT)) < 0) goto error;
+#else /* H5Gopen_vers */
+    if((gid = H5Gopen(fid, GROUPNAME)) < 0) goto error;
+#endif /* H5Gopen_vers */
 
     /* Close group */
     if(H5Gclose(gid) < 0) goto error;
