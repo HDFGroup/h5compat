@@ -214,6 +214,22 @@ TEST_H5G()
 }
 
 
+# Runs tests for H5R API
+#
+TEST_H5R()
+{
+    echo
+    echo "################# Testing H5R API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5r
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI test_h5r H5Rget_obj_type1 "-DH5Rget_obj_type_vers=1"
+    TESTAPI test_h5r H5Rget_obj_type2 "-DH5_USE_16_API -DH5Rget_obj_type_vers=2"
+}
+
+
 ##################  INITIALIZE SCRIPT INFO  ##################
 
 
@@ -271,6 +287,7 @@ echo "h5cc16 = $h5cc16"
 
 TEST_H5E
 TEST_H5G
+TEST_H5R
 
 ##################  CLEANUP  ##################
 
