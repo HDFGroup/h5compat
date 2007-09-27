@@ -17,6 +17,7 @@
 #define FILENAME        "compat_h5a.h5"
 #define DSET_NAME       "/Dataset"
 #define ATTR_NAME       "attr"
+#define ATTR2_NAME      "attr2"
 
 /*
  * Basic tests of attribute (H5A) API routines, to verify that API compatibility
@@ -38,6 +39,7 @@ main(int argc, const char *argv[])
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 8
     printf("H5Adelete_vers = %d\n", H5Adelete_vers);
+    printf("H5Arename_vers = %d\n", H5Arename_vers);
 #endif /* H5_VERS_MINOR >= 8 */
 
     /* Create file */
@@ -48,6 +50,7 @@ main(int argc, const char *argv[])
 
     /* Create a dataset */
     if((dsid = H5Dcreate(fid, DSET_NAME, H5T_NATIVE_UCHAR, sid, H5P_DEFAULT)) < 0) goto error;
+
 
     /* Add attribute to dataset */
 
@@ -60,12 +63,22 @@ main(int argc, const char *argv[])
     /* Close attribute */
     if(H5Aclose(aid) < 0) goto error;
 
+
+    /* Rename the attribute */
+#if defined(H5Arename_vers) && H5Arename_vers > 1
+    if(H5Arename(dsid, ".", ATTR_NAME, ATTR2_NAME, H5P_DEFAULT) < 0) goto error;
+#else /* H5Arename_vers */
+    if(H5Arename(dsid, ATTR_NAME, ATTR2_NAME) < 0) goto error;
+#endif /* H5Arename_vers */
+
+
     /* Delete the attribute */
 #if defined(H5Adelete_vers) && H5Adelete_vers > 1
-    if(H5Adelete(dsid, ".", ATTR_NAME, H5P_DEFAULT) < 0) goto error;
+    if(H5Adelete(dsid, ".", ATTR2_NAME, H5P_DEFAULT) < 0) goto error;
 #else /* H5Adelete_vers */
-    if(H5Adelete(dsid, ATTR_NAME) < 0) goto error;
+    if(H5Adelete(dsid, ATTR2_NAME) < 0) goto error;
 #endif /* H5Adelete_vers */
+
 
     /* Close dataset */
     if(H5Dclose(dsid) < 0) goto error;
