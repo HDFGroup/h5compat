@@ -173,6 +173,21 @@ TESTAPI()
     BUILD "$h5cc18 $options" $testname "v18-$suffix"
 }
 
+# Runs tests for H5A API
+#
+TEST_H5A()
+{
+    echo
+    echo "################# Testing H5A API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5a
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI test_h5a H5Adelete1 "-DH5Adelete_vers=1"
+    TESTAPI test_h5a H5Adelete2 "-DH5_USE_16_API -DH5Adelete_vers=2"
+}
+
 # Runs tests for H5E API
 #
 TEST_H5E()
@@ -301,6 +316,7 @@ echo "h5cc16 = $h5cc16"
 
 ##################  MAIN  ##################
 
+TEST_H5A
 TEST_H5E
 TEST_H5G
 TEST_H5R
