@@ -213,7 +213,6 @@ TEST_H5G()
     TESTAPI test_h5g H5Gopen2 "-DH5_USE_16_API -DH5Gopen_vers=2"
 }
 
-
 # Runs tests for H5R API
 #
 TEST_H5R()
@@ -227,6 +226,21 @@ TEST_H5R()
     # Run tests for overriding version of individual API routines
     TESTAPI test_h5r H5Rget_obj_type1 "-DH5Rget_obj_type_vers=1"
     TESTAPI test_h5r H5Rget_obj_type2 "-DH5_USE_16_API -DH5Rget_obj_type_vers=2"
+}
+
+# Runs tests for H5T API
+#
+TEST_H5T()
+{
+    echo
+    echo "################# Testing H5T API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5t
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI test_h5t H5Tcommit1 "-DH5Tcommit_vers=1"
+    TESTAPI test_h5t H5Tcommit2 "-DH5_USE_16_API -DH5Tcommit_vers=2"
 }
 
 
@@ -285,9 +299,10 @@ echo "h5cc16 = $h5cc16"
 
 ##################  MAIN  ##################
 
-TEST_H5E
-TEST_H5G
-TEST_H5R
+#TEST_H5E
+#TEST_H5G
+#TEST_H5R
+TEST_H5T
 
 ##################  CLEANUP  ##################
 

@@ -1,4 +1,3 @@
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * Copyright by The HDF Group.                                               *
  * All rights reserved.                                                      *
@@ -15,13 +14,12 @@
 
 #include "hdf5.h"
 
-#define FILENAME        "compat_h5g.h5"
-#define GROUPNAME       "Group1"
+#define FILENAME        "compat_h5r.h5"
 #define SPACE_RANK	1
 #define SPACE_DIM	4
 
 /*
- * Basic tests of group (H5G) API routines, to verify that API compatibility
+ * Basic tests of reference (H5R) API routines, to verify that API compatibility
  *      is working in the 1.8+ versions of the library
  */
 
