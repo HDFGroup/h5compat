@@ -241,6 +241,8 @@ TEST_H5T()
     # Run tests for overriding version of individual API routines
     TESTAPI test_h5t H5Tcommit1 "-DH5Tcommit_vers=1"
     TESTAPI test_h5t H5Tcommit2 "-DH5_USE_16_API -DH5Tcommit_vers=2"
+    TESTAPI test_h5t H5Topen1 "-DH5Topen_vers=1"
+    TESTAPI test_h5t H5Topen2 "-DH5_USE_16_API -DH5Topen_vers=2"
 }
 
 
@@ -299,9 +301,9 @@ echo "h5cc16 = $h5cc16"
 
 ##################  MAIN  ##################
 
-#TEST_H5E
-#TEST_H5G
-#TEST_H5R
+TEST_H5E
+TEST_H5G
+TEST_H5R
 TEST_H5T
 
 ##################  CLEANUP  ##################

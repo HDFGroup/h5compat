@@ -34,6 +34,7 @@ main(int argc, const char *argv[])
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 8
     printf("H5Tcommit_vers = %d\n", H5Tcommit_vers);
+    printf("H5Topen_vers = %d\n", H5Topen_vers);
 #endif /* H5_VERS_MINOR >= 8 */
 
     /* Create file */
@@ -48,6 +49,16 @@ main(int argc, const char *argv[])
 #else /* H5Tcommit_vers */
     if(H5Tcommit(fid, "native-int", tid) < 0) goto error;
 #endif /* H5Tcommit_vers */
+
+    /* Close datatype */
+    if(H5Tclose(tid) < 0) goto error;
+
+    /* Re-open the named datatype */
+#if defined(H5Topen_vers) && H5Topen_vers > 1
+    if((tid = H5Topen(fid, "native-int", H5P_DEFAULT)) < 0) goto error;
+#else /* H5Topen_vers */
+    if((tid = H5Topen(fid, "native-int")) < 0) goto error;
+#endif /* H5Topen_vers */
 
     /* Close datatype */
     if(H5Tclose(tid) < 0) goto error;
