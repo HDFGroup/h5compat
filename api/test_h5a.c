@@ -14,15 +14,41 @@
 
 #include "hdf5.h"
 
+/*
+ * Basic tests of attribute (H5A) API routines, to verify that API compatibility
+ *      is working in the 1.8+ versions of the library
+ */
+
 #define FILENAME        "compat_h5a.h5"
 #define DSET_NAME       "/Dataset"
 #define ATTR_NAME       "attr"
 #define ATTR2_NAME      "attr2"
 
-/*
- * Basic tests of attribute (H5A) API routines, to verify that API compatibility
- *      is working in the 1.8+ versions of the library
- */
+#if defined(H5Aiterate_vers) && H5Aiterate_vers > 1
+static herr_t
+aiter_cb2(hid_t location_id, const char *attr_name, const H5A_info_t *ainfo,
+    void *op_data)
+{
+    /* Shut compiler up */
+    location_id = location_id;
+    attr_name = attr_name;
+    ainfo = ainfo;
+    op_data = op_data;
+
+    return(0);
+}
+#else /* H5Aiterate_vers */
+static herr_t
+aiter_cb1(hid_t location_id, const char *attr_name, void *op_data)
+{
+    /* Shut compiler up */
+    location_id = location_id;
+    attr_name = attr_name;
+    op_data = op_data;
+
+    return(0);
+}
+#endif /* H5Aiterate_vers */
 
 int
 main(int argc, const char *argv[])
@@ -39,6 +65,7 @@ main(int argc, const char *argv[])
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 8
     printf("H5Adelete_vers = %d\n", H5Adelete_vers);
+    printf("H5Aiterate_vers = %d\n", H5Aiterate_vers);
     printf("H5Arename_vers = %d\n", H5Arename_vers);
 #endif /* H5_VERS_MINOR >= 8 */
 
@@ -71,6 +98,12 @@ main(int argc, const char *argv[])
     if(H5Arename(dsid, ATTR_NAME, ATTR2_NAME) < 0) goto error;
 #endif /* H5Arename_vers */
 
+    /* Iterate over the attribute(s) */
+#if defined(H5Aiterate_vers) && H5Aiterate_vers > 1
+    if(H5Aiterate(dsid, ".", H5_INDEX_NAME, H5_ITER_INC, NULL, aiter_cb2, NULL, H5P_DEFAULT) < 0) goto error;
+#else /* H5Aiterate_vers */
+    if(H5Aiterate(dsid, NULL, aiter_cb1, NULL) < 0) goto error;
+#endif /* H5Aiterate_vers */
 
     /* Delete the attribute */
 #if defined(H5Adelete_vers) && H5Adelete_vers > 1

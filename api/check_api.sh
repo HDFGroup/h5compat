@@ -186,6 +186,8 @@ TEST_H5A()
     # Run tests for overriding version of individual API routines
     TESTAPI test_h5a H5Adelete1 "-DH5Adelete_vers=1"
     TESTAPI test_h5a H5Adelete2 "-DH5_USE_16_API -DH5Adelete_vers=2"
+    TESTAPI test_h5a H5Aiterate1 "-DH5Aiterate_vers=1"
+    TESTAPI test_h5a H5Aiterate2 "-DH5_USE_16_API -DH5Aiterate_vers=2"
     TESTAPI test_h5a H5Arename1 "-DH5Arename_vers=1"
     TESTAPI test_h5a H5Arename2 "-DH5_USE_16_API -DH5Arename_vers=2"
 }
