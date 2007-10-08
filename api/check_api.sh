@@ -184,12 +184,29 @@ TEST_H5A()
     TEST test_h5a
 
     # Run tests for overriding version of individual API routines
+    TESTAPI test_h5a H5Acreate1 "-DH5Acreate_vers=1"
+    TESTAPI test_h5a H5Acreate2 "-DH5_USE_16_API -DH5Acreate_vers=2"
     TESTAPI test_h5a H5Adelete1 "-DH5Adelete_vers=1"
     TESTAPI test_h5a H5Adelete2 "-DH5_USE_16_API -DH5Adelete_vers=2"
     TESTAPI test_h5a H5Aiterate1 "-DH5Aiterate_vers=1"
     TESTAPI test_h5a H5Aiterate2 "-DH5_USE_16_API -DH5Aiterate_vers=2"
     TESTAPI test_h5a H5Arename1 "-DH5Arename_vers=1"
     TESTAPI test_h5a H5Arename2 "-DH5_USE_16_API -DH5Arename_vers=2"
+}
+
+# Runs tests for H5D API
+#
+TEST_H5D()
+{
+    echo
+    echo "################# Testing H5D API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5d
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI test_h5d H5Dopen1 "-DH5Dopen_vers=1"
+    TESTAPI test_h5d H5Dopen2 "-DH5_USE_16_API -DH5Dopen_vers=2"
 }
 
 # Runs tests for H5E API
@@ -321,6 +338,7 @@ echo "h5cc16 = $h5cc16"
 ##################  MAIN  ##################
 
 TEST_H5A
+TEST_H5D
 TEST_H5E
 TEST_H5G
 TEST_H5R

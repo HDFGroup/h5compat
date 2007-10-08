@@ -64,6 +64,7 @@ main(int argc, const char *argv[])
 
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 8
+    printf("H5Acreate_vers = %d\n", H5Acreate_vers);
     printf("H5Adelete_vers = %d\n", H5Adelete_vers);
     printf("H5Aiterate_vers = %d\n", H5Aiterate_vers);
     printf("H5Arename_vers = %d\n", H5Arename_vers);
@@ -82,7 +83,11 @@ main(int argc, const char *argv[])
     /* Add attribute to dataset */
 
     /* Create attribute */
+#if defined(H5Acreate_vers) && H5Acreate_vers > 1
+    if((aid = H5Acreate(dsid, ".", ATTR_NAME, H5T_NATIVE_UINT, sid, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
+#else /* H5Acreate_vers */
     if((aid = H5Acreate(dsid, ATTR_NAME, H5T_NATIVE_UINT, sid, H5P_DEFAULT)) < 0) goto error;
+#endif /* H5Acreate_vers */
 
     /* Close dataspace */
     if(H5Sclose(sid) < 0) goto error;
