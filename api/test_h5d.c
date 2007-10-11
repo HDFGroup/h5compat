@@ -35,6 +35,7 @@ main(int argc, const char *argv[])
 
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 8
+    printf("H5Dcreate_vers = %d\n", H5Dcreate_vers);
     printf("H5Dopen_vers = %d\n", H5Dopen_vers);
 #endif /* H5_VERS_MINOR >= 8 */
 
@@ -45,7 +46,11 @@ main(int argc, const char *argv[])
     if((sid = H5Screate(H5S_SCALAR)) < 0) goto error;
 
     /* Create a dataset */
+#if defined(H5Dcreate_vers) && H5Dcreate_vers > 1
+    if((dsid = H5Dcreate(fid, DSET_NAME, H5T_NATIVE_UCHAR, sid, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
+#else /* H5Dcreate_vers */
     if((dsid = H5Dcreate(fid, DSET_NAME, H5T_NATIVE_UCHAR, sid, H5P_DEFAULT)) < 0) goto error;
+#endif /* H5Dcreate_vers */
 
     /* Close dataspace */
     if(H5Sclose(sid) < 0) goto error;

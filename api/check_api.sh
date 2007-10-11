@@ -58,9 +58,17 @@ CHECK()
     # Set the same of the actual and expected output files
     expected="expected/$1/$2"
     actual=$1".out"
+    tmp="tmp.out"
+
+    # Mask off thread ID
+    sed 's/thread .*:/thread 0:/' <$actual >$tmp
+    if ((ret != 0)); then
+        echo "sed failed ?!?!"
+        exit 1
+    fi
 
     # Check if output from test program is the same as expected output
-    cmp -s $actual $expected
+    cmp -s $tmp $expected
     ((ret = $?))
 
     # Check if output didn't match expected output
@@ -73,7 +81,7 @@ CHECK()
                 echo "Expected output was not found."
                 echo "Adding current output as expected output:"
                 echo
-                cat $actual | tee $expected
+                cat $tmp | tee $expected
                 echo
                 echo
             # without the -a flag, and error will occur
@@ -97,7 +105,7 @@ CHECK()
             echo "###########################################################"
             echo
             echo "Difference in output:"
-            diff $actual $expected
+            diff $tmp $expected
 
             echo
             echo "###########################################################"
@@ -111,7 +119,7 @@ CHECK()
             echo
             echo "Output from test:"
             echo
-            cat $actual
+            cat $tmp
 
             CLEANUP
             exit 1
@@ -126,8 +134,8 @@ BUILD()
     $1 $2.c
     if (($? == 0)); then
 #        echo "Testing with: $1"
-        ./a.out > $2.out
 #        ./a.out
+        ./a.out > $2.out
         if (($? != 0)); then
             echo "*FAILED*"
             echo "error running $2 with $1"
@@ -147,17 +155,21 @@ BUILD()
 #
 TEST()
 {
+    # Create aliases for the parameters
+    testname=$1
+    compile_options=$2
+
     TESTING "actual 1.6.x library"
-    BUILD $h5cc16 $1 "v16"
+    BUILD "$h5cc16 $compile_options" $testname "v16"
 
     TESTING "normal 1.8.x library build"
-    BUILD $h5cc18 $1 "v18-actual"
+    BUILD "$h5cc18 $compile_options" $testname "v18-actual"
 
     TESTING "1.8.x library built in 1.6.x compatibility mode"
-    BUILD $h5cc18compat $1 "v18-compat"
+    BUILD "$h5cc18compat $compile_options" $testname "v18-compat"
 
     TESTING "normal 1.8.x library build, with 1.6.x compatibility macro"
-    BUILD "$h5cc18 -DH5_USE_16_API" $1 "v18-macro"
+    BUILD "$h5cc18 -DH5_USE_16_API $compile_options" $testname "v18-macro"
 }
 
 # Build test program with different API routine versions overridden
@@ -166,119 +178,134 @@ TESTAPI()
 {
     # Create aliases for the parameters
     testname=$1
-    suffix=$2
-    options=$3
+    compile_options=$2
+    suffix=$3
+    compat_options=$4
 
-    TESTING "normal 1.8.x, with: $options"
-    BUILD "$h5cc18 $options" $testname "v18-$suffix"
+    TESTING "normal 1.8.x, with: $compat_options"
+    BUILD "$h5cc18 $compat_options $compile_options" $testname "v18-$suffix"
 }
 
 # Runs tests for H5A API
 #
 TEST_H5A()
 {
+    compile_options="-DH5Dcreate_vers=1"
+
     echo
     echo "################# Testing H5A API #################"
 
     # Run "entire library API" tests
-    TEST test_h5a
+    TEST test_h5a $compile_options
 
     # Run tests for overriding version of individual API routines
-    TESTAPI test_h5a H5Acreate1 "-DH5Acreate_vers=1"
-    TESTAPI test_h5a H5Acreate2 "-DH5_USE_16_API -DH5Acreate_vers=2"
-    TESTAPI test_h5a H5Adelete1 "-DH5Adelete_vers=1"
-    TESTAPI test_h5a H5Adelete2 "-DH5_USE_16_API -DH5Adelete_vers=2"
-    TESTAPI test_h5a H5Aiterate1 "-DH5Aiterate_vers=1"
-    TESTAPI test_h5a H5Aiterate2 "-DH5_USE_16_API -DH5Aiterate_vers=2"
-    TESTAPI test_h5a H5Arename1 "-DH5Arename_vers=1"
-    TESTAPI test_h5a H5Arename2 "-DH5_USE_16_API -DH5Arename_vers=2"
+    TESTAPI test_h5a "$compile_options" H5Acreate1 "-DH5Acreate_vers=1"
+    TESTAPI test_h5a "$compile_options" H5Acreate2 "-DH5_USE_16_API -DH5Acreate_vers=2"
+    TESTAPI test_h5a "$compile_options" H5Adelete1 "-DH5Adelete_vers=1"
+    TESTAPI test_h5a "$compile_options" H5Adelete2 "-DH5_USE_16_API -DH5Adelete_vers=2"
+    TESTAPI test_h5a "$compile_options" H5Aiterate1 "-DH5Aiterate_vers=1"
+    TESTAPI test_h5a "$compile_options" H5Aiterate2 "-DH5_USE_16_API -DH5Aiterate_vers=2"
+    TESTAPI test_h5a "$compile_options" H5Arename1 "-DH5Arename_vers=1"
+    TESTAPI test_h5a "$compile_options" H5Arename2 "-DH5_USE_16_API -DH5Arename_vers=2"
 }
 
 # Runs tests for H5D API
 #
 TEST_H5D()
 {
+    compile_options=""
+
     echo
     echo "################# Testing H5D API #################"
 
     # Run "entire library API" tests
-    TEST test_h5d
+    TEST test_h5d $compile_options
 
     # Run tests for overriding version of individual API routines
-    TESTAPI test_h5d H5Dopen1 "-DH5Dopen_vers=1"
-    TESTAPI test_h5d H5Dopen2 "-DH5_USE_16_API -DH5Dopen_vers=2"
+    TESTAPI test_h5d "$compile_options" H5Dopen1 "-DH5Dopen_vers=1"
+    TESTAPI test_h5d "$compile_options" H5Dopen2 "-DH5_USE_16_API -DH5Dopen_vers=2"
+    TESTAPI test_h5d "$compile_options" H5Dcreate1 "-DH5Dcreate_vers=1"
+    TESTAPI test_h5d "$compile_options" H5Dcreate2 "-DH5_USE_16_API -DH5Dcreate_vers=2"
 }
 
 # Runs tests for H5E API
 #
 TEST_H5E()
 {
+    compile_options=""
+
     echo
     echo "################# Testing H5E API #################"
 
     # Run "entire library API" tests
-    TEST test_h5e
+    TEST test_h5e $compile_options
 
     # Run tests for overriding version of individual API routines
-    TESTAPI test_h5e H5Eclear1 "-DH5Eclear_vers=1"
-    TESTAPI test_h5e H5Eclear2 "-DH5_USE_16_API -DH5Eclear_vers=2"
-    TESTAPI test_h5e H5Eauto1 "-DH5E_auto_t_vers=1 -DH5Eget_auto_vers=1 -DH5Eset_auto_vers=1"
-    TESTAPI test_h5e H5Eauto2 "-DH5_USE_16_API -DH5E_auto_t_vers=2 -DH5Eget_auto_vers=2 -DH5Eset_auto_vers=2"
-    TESTAPI test_h5e H5Epush1 "-DH5Epush_vers=1"
-    TESTAPI test_h5e H5Epush2 "-DH5_USE_16_API -DH5Epush_vers=2"
-    TESTAPI test_h5e H5Ewalk1 "-DH5Ewalk_vers=1"
-    TESTAPI test_h5e H5Ewalk2 "-DH5_USE_16_API -DH5Ewalk_vers=2"
-    TESTAPI test_h5e H5Eprint1 "-DH5Eprint_vers=1"
-    TESTAPI test_h5e H5Eprint2 "-DH5_USE_16_API -DH5Eprint_vers=2"
+    TESTAPI test_h5e "$compile_options" H5Eclear1 "-DH5Eclear_vers=1"
+    TESTAPI test_h5e "$compile_options" H5Eclear2 "-DH5_USE_16_API -DH5Eclear_vers=2"
+    TESTAPI test_h5e "$compile_options" H5Eauto1 "-DH5E_auto_t_vers=1 -DH5Eget_auto_vers=1 -DH5Eset_auto_vers=1"
+    TESTAPI test_h5e "$compile_options" H5Eauto2 "-DH5_USE_16_API -DH5E_auto_t_vers=2 -DH5Eget_auto_vers=2 -DH5Eset_auto_vers=2"
+    TESTAPI test_h5e "$compile_options" H5Epush1 "-DH5Epush_vers=1"
+    TESTAPI test_h5e "$compile_options" H5Epush2 "-DH5_USE_16_API -DH5Epush_vers=2"
+    TESTAPI test_h5e "$compile_options" H5Ewalk1 "-DH5Ewalk_vers=1"
+    TESTAPI test_h5e "$compile_options" H5Ewalk2 "-DH5_USE_16_API -DH5Ewalk_vers=2"
+    TESTAPI test_h5e "$compile_options" H5Eprint1 "-DH5Eprint_vers=1"
+    TESTAPI test_h5e "$compile_options" H5Eprint2 "-DH5_USE_16_API -DH5Eprint_vers=2"
 }
 
 # Runs tests for H5G API
 #
 TEST_H5G()
 {
+    compile_options=""
+
     echo
     echo "################# Testing H5G API #################"
 
     # Run "entire library API" tests
-    TEST test_h5g
+    TEST test_h5g $compile_options
 
     # Run tests for overriding version of individual API routines
-    TESTAPI test_h5g H5Gcreate1 "-DH5Gcreate_vers=1"
-    TESTAPI test_h5g H5Gcreate2 "-DH5_USE_16_API -DH5Gcreate_vers=2"
-    TESTAPI test_h5g H5Gopen1 "-DH5Gopen_vers=1"
-    TESTAPI test_h5g H5Gopen2 "-DH5_USE_16_API -DH5Gopen_vers=2"
+    TESTAPI test_h5g "$compile_options" H5Gcreate1 "-DH5Gcreate_vers=1"
+    TESTAPI test_h5g "$compile_options" H5Gcreate2 "-DH5_USE_16_API -DH5Gcreate_vers=2"
+    TESTAPI test_h5g "$compile_options" H5Gopen1 "-DH5Gopen_vers=1"
+    TESTAPI test_h5g "$compile_options" H5Gopen2 "-DH5_USE_16_API -DH5Gopen_vers=2"
 }
 
 # Runs tests for H5R API
 #
 TEST_H5R()
 {
+    compile_options="-DH5Dcreate_vers=1"
+
     echo
     echo "################# Testing H5R API #################"
 
     # Run "entire library API" tests
-    TEST test_h5r
+    TEST test_h5r $compile_options
 
     # Run tests for overriding version of individual API routines
-    TESTAPI test_h5r H5Rget_obj_type1 "-DH5Rget_obj_type_vers=1"
-    TESTAPI test_h5r H5Rget_obj_type2 "-DH5_USE_16_API -DH5Rget_obj_type_vers=2"
+    TESTAPI test_h5r "$compile_options" H5Rget_obj_type1 "-DH5Rget_obj_type_vers=1"
+    TESTAPI test_h5r "$compile_options" H5Rget_obj_type2 "-DH5_USE_16_API -DH5Rget_obj_type_vers=2"
 }
 
 # Runs tests for H5T API
 #
 TEST_H5T()
 {
+    compile_options=""
+
     echo
     echo "################# Testing H5T API #################"
 
     # Run "entire library API" tests
-    TEST test_h5t
+    TEST test_h5t $compile_options
 
     # Run tests for overriding version of individual API routines
-    TESTAPI test_h5t H5Tcommit1 "-DH5Tcommit_vers=1"
-    TESTAPI test_h5t H5Tcommit2 "-DH5_USE_16_API -DH5Tcommit_vers=2"
-    TESTAPI test_h5t H5Topen1 "-DH5Topen_vers=1"
-    TESTAPI test_h5t H5Topen2 "-DH5_USE_16_API -DH5Topen_vers=2"
+    TESTAPI test_h5t "$compile_options" H5Tcommit1 "-DH5Tcommit_vers=1"
+    TESTAPI test_h5t "$compile_options" H5Tcommit2 "-DH5_USE_16_API -DH5Tcommit_vers=2"
+    TESTAPI test_h5t "$compile_options" H5Topen1 "-DH5Topen_vers=1"
+    TESTAPI test_h5t "$compile_options" H5Topen2 "-DH5_USE_16_API -DH5Topen_vers=2"
 }
 
 
