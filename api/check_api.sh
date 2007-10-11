@@ -62,6 +62,7 @@ CHECK()
 
     # Mask off thread ID
     sed 's/thread .*:/thread 0:/' <$actual >$tmp
+    ((ret = $?))
     if ((ret != 0)); then
         echo "sed failed ?!?!"
         exit 1
@@ -272,6 +273,23 @@ TEST_H5G()
     TESTAPI test_h5g "$compile_options" H5Gopen2 "-DH5_USE_16_API -DH5Gopen_vers=2"
 }
 
+# Runs tests for H5P API
+#
+TEST_H5P()
+{
+    compile_options=""
+
+    echo
+    echo "################# Testing H5P API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5p $compile_options
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI test_h5p "$compile_options" H5Pregister1 "-DH5Pregister_vers=1"
+    TESTAPI test_h5p "$compile_options" H5Pregister2 "-DH5_USE_16_API -DH5Pregister_vers=2"
+}
+
 # Runs tests for H5R API
 #
 TEST_H5R()
@@ -368,6 +386,7 @@ TEST_H5A
 TEST_H5D
 TEST_H5E
 TEST_H5G
+TEST_H5P
 TEST_H5R
 TEST_H5T
 
