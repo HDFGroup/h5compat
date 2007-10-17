@@ -290,6 +290,8 @@ TEST_H5P()
     TESTAPI test_h5p "$compile_options" H5Pregister2 "-DH5_USE_16_API -DH5Pregister_vers=2"
     TESTAPI test_h5p "$compile_options" H5Pinsert1 "-DH5Pinsert_vers=1"
     TESTAPI test_h5p "$compile_options" H5Pinsert2 "-DH5_USE_16_API -DH5Pinsert_vers=2"
+    TESTAPI test_h5p "$compile_options" H5Pget_filter1 "-DH5Pget_filter_vers=1"
+    TESTAPI test_h5p "$compile_options" H5Pget_filter2 "-DH5_USE_16_API -DH5Pget_filter_vers=2"
 }
 
 # Runs tests for H5R API

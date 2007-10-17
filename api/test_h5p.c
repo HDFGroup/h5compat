@@ -42,6 +42,7 @@ int     prop2_def = 20;  /* Property default value */
 int
 main(int argc, const char *argv[])
 {
+    hid_t	dcpl;		/* Dataset creation property list ID */
     hid_t	cid;		/* Generic Property class ID */
     hid_t	lid;		/* Generic Property list ID */
     size_t	nprops;		/* Number of properties */
@@ -52,6 +53,7 @@ main(int argc, const char *argv[])
 
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 8
+    printf("H5Pget_filter_vers = %d\n", H5Pget_filter_vers);
     printf("H5Pinsert_vers = %d\n", H5Pinsert_vers);
     printf("H5Pregister_vers = %d\n", H5Pregister_vers);
 #endif /* H5_VERS_MINOR >= 8 */
@@ -95,6 +97,30 @@ main(int argc, const char *argv[])
 
     /* Close class */
     if(H5Pclose_class(cid) < 0) goto error;
+
+
+    /* Create dataset creation property list */
+    if((dcpl = H5Pcreate(H5P_DATASET_CREATE)) < 0) goto error;
+
+#if defined H5_HAVE_FILTER_DEFLATE
+{
+    H5Z_filter_t filtn;                 /* filter identification number */
+
+    if(H5Pset_deflate(dcpl, 6) < 0) goto error;
+
+    /* Check for the deflate filter */
+#if defined(H5Pget_filter_vers) && H5Pget_filter_vers > 1
+    filtn = H5Pget_filter(dcpl, (unsigned)0, NULL, NULL, NULL, (size_t)0, NULL, NULL);
+#else /* H5Pget_filter_vers */
+    filtn = H5Pget_filter(dcpl, (unsigned)0, NULL, NULL, NULL, (size_t)0, NULL);
+#endif /* H5Pget_filter_vers */
+    if(H5Z_FILTER_DEFLATE != filtn)
+        goto error;
+}
+#endif /* H5_HAVE_FILTER_DEFLATE */
+
+    /* Close dataset creation property list */
+    if(H5Pclose(dcpl) < 0) goto error;
 
     return(0);
 
