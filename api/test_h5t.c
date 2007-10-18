@@ -24,8 +24,11 @@
 int
 main(int argc, const char *argv[])
 {
-    hid_t	fid;		/* HDF5 File ID			*/
-    hid_t	tid;            /* Datatype ID			*/
+    hid_t	fid;		        /* HDF5 File ID			*/
+    hid_t	tid;                    /* Datatype ID			*/
+    unsigned    rank = 2;               /* Rank for array datatype      */
+    hsize_t     dims[2] = {3, 3};       /* Dimensions for array datatype */
+    hsize_t     rdims[2] = {0, 0};      /* Dimensions for querying array datatype */
 
     /* Shut compiler up */
     argc = argc;
@@ -33,9 +36,26 @@ main(int argc, const char *argv[])
 
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 8
+    printf("H5Tarray_create_vers = %d\n", H5Tarray_create_vers);
     printf("H5Tcommit_vers = %d\n", H5Tcommit_vers);
+    printf("H5Tget_array_dims_vers = %d\n", H5Tget_array_dims_vers);
     printf("H5Topen_vers = %d\n", H5Topen_vers);
 #endif /* H5_VERS_MINOR >= 8 */
+
+    /* Create an array datatype with an atomic base type */
+#if defined(H5Tarray_create_vers) && H5Tarray_create_vers > 1
+    if((tid = H5Tarray_create(H5T_NATIVE_INT, rank, dims)) < 0) goto error;
+#else /* H5Tarray_create_vers */
+    if((tid = H5Tarray_create(H5T_NATIVE_INT, (int)rank, dims, NULL)) < 0) goto error;
+#endif /* H5Tarray_create_vers */
+
+    /* Get the array dimensions */
+#if defined(H5Tget_array_dims_vers) && H5Tget_array_dims_vers > 1
+    if(H5Tget_array_dims(tid, rdims) < 0) goto error;
+#else /* H5Tget_array_dims_vers */
+    if(H5Tget_array_dims(tid, rdims, NULL) < 0) goto error;
+#endif /* H5Tget_array_dims_vers */
+
 
     /* Create file */
     if((fid = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;

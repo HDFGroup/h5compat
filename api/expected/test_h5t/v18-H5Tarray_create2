@@ -1,4 +1,4 @@
-H5Tarray_create_vers = 1
+H5Tarray_create_vers = 2
 H5Tcommit_vers = 1
 H5Tget_array_dims_vers = 1
-H5Topen_vers = 2
+H5Topen_vers = 1

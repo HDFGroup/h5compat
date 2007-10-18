@@ -326,8 +326,12 @@ TEST_H5T()
     TEST test_h5t $compile_options
 
     # Run tests for overriding version of individual API routines
+    TESTAPI test_h5t "$compile_options" H5Tarray_create1 "-DH5Tarray_create_vers=1"
+    TESTAPI test_h5t "$compile_options" H5Tarray_create2 "-DH5_USE_16_API -DH5Tarray_create_vers=2"
     TESTAPI test_h5t "$compile_options" H5Tcommit1 "-DH5Tcommit_vers=1"
     TESTAPI test_h5t "$compile_options" H5Tcommit2 "-DH5_USE_16_API -DH5Tcommit_vers=2"
+    TESTAPI test_h5t "$compile_options" H5Tget_array_dims1 "-DH5Tget_array_dims_vers=1"
+    TESTAPI test_h5t "$compile_options" H5Tget_array_dims2 "-DH5_USE_16_API -DH5Tget_array_dims_vers=2"
     TESTAPI test_h5t "$compile_options" H5Topen1 "-DH5Topen_vers=1"
     TESTAPI test_h5t "$compile_options" H5Topen2 "-DH5_USE_16_API -DH5Topen_vers=2"
 }
