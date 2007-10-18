@@ -1,3 +1,4 @@
 H5Pget_filter_vers = 2
+H5Pget_filter_by_id_vers = 2
 H5Pinsert_vers = 2
 H5Pregister_vers = 2

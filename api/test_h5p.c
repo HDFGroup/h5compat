@@ -54,6 +54,7 @@ main(int argc, const char *argv[])
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 8
     printf("H5Pget_filter_vers = %d\n", H5Pget_filter_vers);
+    printf("H5Pget_filter_by_id_vers = %d\n", H5Pget_filter_by_id_vers);
     printf("H5Pinsert_vers = %d\n", H5Pinsert_vers);
     printf("H5Pregister_vers = %d\n", H5Pregister_vers);
 #endif /* H5_VERS_MINOR >= 8 */
@@ -105,16 +106,33 @@ main(int argc, const char *argv[])
 #if defined H5_HAVE_FILTER_DEFLATE
 {
     H5Z_filter_t filtn;                 /* filter identification number */
+    size_t cd_nelmts = 1;               /* Number of filter parameters */
+    unsigned cd_value;                  /* Filter parameter */
 
     if(H5Pset_deflate(dcpl, 6) < 0) goto error;
 
     /* Check for the deflate filter */
 #if defined(H5Pget_filter_vers) && H5Pget_filter_vers > 1
-    filtn = H5Pget_filter(dcpl, (unsigned)0, NULL, NULL, NULL, (size_t)0, NULL, NULL);
+    filtn = H5Pget_filter(dcpl, (unsigned)0, NULL, &cd_nelmts, &cd_value, (size_t)0, NULL, NULL);
 #else /* H5Pget_filter_vers */
-    filtn = H5Pget_filter(dcpl, (unsigned)0, NULL, NULL, NULL, (size_t)0, NULL);
+    filtn = H5Pget_filter(dcpl, (unsigned)0, NULL, &cd_nelmts, &cd_value, (size_t)0, NULL);
 #endif /* H5Pget_filter_vers */
     if(H5Z_FILTER_DEFLATE != filtn)
+        goto error;
+    if(1 != cd_nelmts)
+        goto error;
+    if(6 != cd_value)
+        goto error;
+
+    /* Check for the deflate filter */
+#if defined(H5Pget_filter_by_id_vers) && H5Pget_filter_by_id_vers > 1
+    filtn = H5Pget_filter_by_id(dcpl, H5Z_FILTER_DEFLATE, NULL, &cd_nelmts, &cd_value, (size_t)0, NULL, NULL);
+#else /* H5Pget_filter_by_id_vers */
+    filtn = H5Pget_filter_by_id(dcpl, H5Z_FILTER_DEFLATE, NULL, &cd_nelmts, &cd_value, (size_t)0, NULL);
+#endif /* H5Pget_filter_by_id_vers */
+    if(1 != cd_nelmts)
+        goto error;
+    if(6 != cd_value)
         goto error;
 }
 #endif /* H5_HAVE_FILTER_DEFLATE */
