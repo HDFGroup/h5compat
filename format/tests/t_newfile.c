@@ -83,25 +83,25 @@ int main(int argc, char *argv[])
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Create Group g1 */
-    gid = H5Gcreate (fid, "/g1", 0);
+    gid = H5Gcreate(fid, "/g1", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid);
 
    /* Create Group g1.1 */
-    gid = H5Gcreate (fid, "/g1/g1.1", 0);
+    gid = H5Gcreate(fid, "/g1/g1.1", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
    /* Create Datatype tid */
     dim[0] = dim[1] = dim[2] = dim[3] = 2;
     tid = H5Tcreate(H5T_COMPOUND, sizeof(dset1_t));
 
-    array_dt = H5Tarray_create(H5T_NATIVE_INT, 4, dim, NULL);
+    array_dt = H5Tarray_create(H5T_NATIVE_INT, 4, dim);
     H5Tinsert(tid, "a_array", HOFFSET(dset1_t, a), array_dt);
     H5Tclose(array_dt);
 
-    array_dt = H5Tarray_create(H5T_NATIVE_DOUBLE, 4, dim, NULL);
+    array_dt = H5Tarray_create(H5T_NATIVE_DOUBLE, 4, dim);
     H5Tinsert(tid, "b_array", HOFFSET(dset1_t, b), array_dt);
     H5Tclose(array_dt);
 
-    array_dt = H5Tarray_create(H5T_NATIVE_DOUBLE, 4, dim, NULL);
+    array_dt = H5Tarray_create(H5T_NATIVE_DOUBLE, 4, dim);
     H5Tinsert(tid, "c_array", HOFFSET(dset1_t, c), array_dt);
     H5Tclose(array_dt);
 
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
    /* Create Dataset dset1 */
     dcpl = H5Pcreate(H5P_DATASET_CREATE);
     H5Pset_chunk(dcpl, 1, &sdim);
-    did = H5Dcreate(gid, "dset1", tid, sid, dcpl);
+    did = H5Dcreate(gid, "dset1", tid, sid, H5P_DEFAULT, dcpl, H5P_DEFAULT);
 
    /* Write to Dataset dset1 */
     for (j=0; j<(int)sdim; j++) {
@@ -150,10 +150,10 @@ int main(int argc, char *argv[])
     H5Gclose(gid);
 
    /* Create Group g1.2 */
-    gid = H5Gcreate (fid, "/g1/g1.2", 0);
+    gid = H5Gcreate(fid, "/g1/g1.2", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
    /* Create Soft Link to dset1 */
-    H5Glink( gid, H5G_LINK_HARD, "/g1/g1.1/dset1", "./hlink1" );
+    H5Glink(gid, H5G_LINK_HARD, "/g1/g1.1/dset1", "./hlink1");
 
    /* Save datatype as a named datatype */
 
@@ -162,30 +162,30 @@ int main(int argc, char *argv[])
  /* =========================================== */
 
    /* Create Group g2 */
-    gid = H5Gcreate (fid, "/g2", 0);
+    gid = H5Gcreate(fid, "/g2", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
    /* Save datatype as a named datatype */
-    H5Tcommit(gid, "dtype1", tid );
+    H5Tcommit(gid, "dtype1", tid, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Tclose(tid);
     H5Gclose(gid);
 
  /* =========================================== */
 
    /* Create Group g3 */
-    gid = H5Gcreate (fid, "/g3", 0);
+    gid = H5Gcreate(fid, "/g3", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid);
 
  /* =========================================== */
 
    /* Create Group g4 */
-    gid = H5Gcreate (fid, "/g4", 0);
+    gid = H5Gcreate(fid, "/g4", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
    /* Create Dataspace  */
     dims[0] = dims[1] = 10;
     sid = H5Screate_simple(2, dims, NULL);
 
    /* Create Dataset dset2  */
-    did = H5Dcreate(gid, "dset2", H5T_NATIVE_INT, sid, H5P_DEFAULT);
+    did = H5Dcreate(gid, "dset2", H5T_NATIVE_INT, sid, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
    /* Write to Dataset dset2 */
     for (i = 0; i < 10; i++)
@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
         dims[0] = 10;
         sprintf(buf, "attr%05d", i);
         sid = H5Screate_simple(1, dims, NULL);
-        aid = H5Acreate (did, buf, H5T_NATIVE_CHAR, sid, H5P_DEFAULT);
+        aid = H5Acreate(did, buf, H5T_NATIVE_CHAR, sid, H5P_DEFAULT, H5P_DEFAULT);
         H5Awrite(aid, H5T_NATIVE_CHAR, buf);
         H5Sclose(sid);
         H5Aclose(aid);
@@ -214,17 +214,17 @@ int main(int argc, char *argv[])
  /* =========================================== */
 
    /* Open Group g3 */
-    gid = H5Gopen (fid, "/g3");
+    gid = H5Gopen(fid, "/g3", H5P_DEFAULT);
 
    /* Create Hard Link to dset2 */
-    H5Glink( gid, H5G_LINK_HARD, "/g4/dset2", "./hlink2" );
+    H5Glink(gid, H5G_LINK_HARD, "/g4/dset2", "./hlink2");
 
     H5Gclose(gid);
 
  /* =========================================== */
 
    /* Create Group g5 */
-    gid = H5Gcreate (fid, "/g5", 0);
+    gid = H5Gcreate(fid, "/g5", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
    /* Create Hard Link to dset2 */
     H5Glink( gid, H5G_LINK_SOFT, "/g4/dset2", "./slink1" );

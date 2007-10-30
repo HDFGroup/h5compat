@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     H5Ldelete( fid, "g4", H5P_DEFAULT );
 
    /* Create Group g4 */
-    gid = H5Gcreate (fid, "/g4", 0);
+    gid = H5Gcreate (fid, "/g4", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Lcreate_hard( fid, "/g3/hlink2", gid, "dset2", H5P_DEFAULT, H5P_DEFAULT );
     
    /* Close Group */

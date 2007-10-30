@@ -60,13 +60,13 @@ int main(int argc, char *argv[])
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Open Group g4 */
-    gid = H5Gopen(fid, "/g4");
+    gid = H5Gopen(fid, "/g4", H5P_DEFAULT);
 
    /* Open Dataset dset2 */
-    did = H5Dopen(gid, "dset2");
+    did = H5Dopen(gid, "dset2", H5P_DEFAULT);
 
    /* Open attribute */
-    aid = H5Aopen(did, ".", "attr00001", H5P_DEFAULT, H5P_DEFAULT);
+    aid = H5Aopen(did, "attr00001", H5P_DEFAULT);
 
    /* Add attributes to dset2 */
     sprintf(buf, "attr00001");

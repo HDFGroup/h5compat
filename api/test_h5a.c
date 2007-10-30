@@ -22,7 +22,6 @@
 #define FILENAME        "compat_h5a.h5"
 #define DSET_NAME       "/Dataset"
 #define ATTR_NAME       "attr"
-#define ATTR2_NAME      "attr2"
 
 #if defined(H5Aiterate_vers) && H5Aiterate_vers > 1
 static herr_t
@@ -65,9 +64,7 @@ main(int argc, const char *argv[])
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 8
     printf("H5Acreate_vers = %d\n", H5Acreate_vers);
-    printf("H5Adelete_vers = %d\n", H5Adelete_vers);
     printf("H5Aiterate_vers = %d\n", H5Aiterate_vers);
-    printf("H5Arename_vers = %d\n", H5Arename_vers);
 #endif /* H5_VERS_MINOR >= 8 */
 
     /* Create file */
@@ -84,7 +81,7 @@ main(int argc, const char *argv[])
 
     /* Create attribute */
 #if defined(H5Acreate_vers) && H5Acreate_vers > 1
-    if((aid = H5Acreate(dsid, ".", ATTR_NAME, H5T_NATIVE_UINT, sid, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
+    if((aid = H5Acreate(dsid, ATTR_NAME, H5T_NATIVE_UINT, sid, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
 #else /* H5Acreate_vers */
     if((aid = H5Acreate(dsid, ATTR_NAME, H5T_NATIVE_UINT, sid, H5P_DEFAULT)) < 0) goto error;
 #endif /* H5Acreate_vers */
@@ -96,26 +93,12 @@ main(int argc, const char *argv[])
     if(H5Aclose(aid) < 0) goto error;
 
 
-    /* Rename the attribute */
-#if defined(H5Arename_vers) && H5Arename_vers > 1
-    if(H5Arename(dsid, ".", ATTR_NAME, ATTR2_NAME, H5P_DEFAULT) < 0) goto error;
-#else /* H5Arename_vers */
-    if(H5Arename(dsid, ATTR_NAME, ATTR2_NAME) < 0) goto error;
-#endif /* H5Arename_vers */
-
     /* Iterate over the attribute(s) */
 #if defined(H5Aiterate_vers) && H5Aiterate_vers > 1
-    if(H5Aiterate(dsid, ".", H5_INDEX_NAME, H5_ITER_INC, NULL, aiter_cb2, NULL, H5P_DEFAULT) < 0) goto error;
+    if(H5Aiterate(dsid, H5_INDEX_NAME, H5_ITER_INC, NULL, aiter_cb2, NULL) < 0) goto error;
 #else /* H5Aiterate_vers */
     if(H5Aiterate(dsid, NULL, aiter_cb1, NULL) < 0) goto error;
 #endif /* H5Aiterate_vers */
-
-    /* Delete the attribute */
-#if defined(H5Adelete_vers) && H5Adelete_vers > 1
-    if(H5Adelete(dsid, ".", ATTR2_NAME, H5P_DEFAULT) < 0) goto error;
-#else /* H5Adelete_vers */
-    if(H5Adelete(dsid, ATTR2_NAME) < 0) goto error;
-#endif /* H5Adelete_vers */
 
 
     /* Close dataset */

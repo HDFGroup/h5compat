@@ -78,7 +78,7 @@ read16()
 #### Read with v1.8 ####
 read18()
 {
-    $h5cc18 read_compat.c
+    $h5cc18 -DH5_USE_16_API read_compat.c
     if (($? == 0))
     then
         echo >> errors.log
@@ -178,6 +178,11 @@ RunTest()
     echo "#################  $1  #################"
     ./gen_compat.out
     $h5cc18 tests/$Test
+    if (($? != 0))
+    then
+        echo "messed up compiling test/$Test"
+        exit 1
+    fi
     ./a.out
     read16
     read18

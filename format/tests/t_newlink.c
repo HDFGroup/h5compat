@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Open group g3 */
-    gid = H5Gopen (fid, "/g3");
+    gid = H5Gopen(fid, "/g3", H5P_DEFAULT);
     H5Ldelete( gid, "hlink2", H5P_DEFAULT );
 
    /* Create Link hlink2 */

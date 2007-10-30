@@ -53,12 +53,12 @@ int main(int argc, char *argv[])
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Open Group g3 and remove link to dataset */
-    gid = H5Gopen (fid, "/g3");
+    gid = H5Gopen(fid, "/g3", H5P_DEFAULT);
     H5Ldelete( gid, "hlink2", H5P_DEFAULT );
     H5Gclose(gid);
 
    /* Open Group g4 */
-    gid = H5Gopen (fid, "/g4");
+    gid = H5Gopen(fid, "/g4", H5P_DEFAULT);
     H5Ldelete( gid, "dset2", H5P_DEFAULT );
 
    /* Create Dataspace  */
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
     sid = H5Screate_simple(2, dims, NULL);
 
    /* Create Dataset dset2  */
-    did = H5Dcreate(gid, "dset2", H5T_NATIVE_INT, sid, H5P_DEFAULT);
+    did = H5Dcreate(gid, "dset2", H5T_NATIVE_INT, sid, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
    /* Write to Dataset dset2 */
     for (i = 0; i < 10; i++)
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
         dims[0] = 10;
         sprintf(buf, "attr%05d", i);
         sid = H5Screate_simple(1, dims, NULL);
-        aid = H5Acreate (did, buf, H5T_NATIVE_CHAR, sid, H5P_DEFAULT);
+        aid = H5Acreate(did, buf, H5T_NATIVE_CHAR, sid, H5P_DEFAULT, H5P_DEFAULT);
         H5Awrite(aid, H5T_NATIVE_CHAR, buf);
         H5Sclose(sid);
         H5Aclose(aid);
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
  /* =========================================== */
 
    /* Open Group g3 */
-    gid = H5Gopen (fid, "/g3");
+    gid = H5Gopen(fid, "/g3", H5P_DEFAULT);
 
    /* Create Hard Link to dset2 */
     H5Glink( gid, H5G_LINK_HARD, "/g4/dset2", "./hlink2" );

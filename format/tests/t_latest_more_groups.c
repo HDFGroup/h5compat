@@ -42,37 +42,37 @@ int main(int argc, char *argv[])
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Open group g3 */
-    gid = H5Gopen( fid, "g3");
+    gid = H5Gopen(fid, "g3", H5P_DEFAULT);
 
    /* add more groups */
-    gid2 = H5Gcreate( gid, "g3.0", 0);
+    gid2 = H5Gcreate(gid, "g3.0", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
-    gid2 = H5Gcreate( gid, "g3.1", 0);
+    gid2 = H5Gcreate(gid, "g3.1", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
-    gid2 = H5Gcreate( gid, "g3.2", 0);
+    gid2 = H5Gcreate(gid, "g3.2", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
-    gid2 = H5Gcreate( gid, "g3.3", 0);
+    gid2 = H5Gcreate(gid, "g3.3", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
-    gid2 = H5Gcreate( gid, "g3.4", 0);
+    gid2 = H5Gcreate(gid, "g3.4", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
-    gid2 = H5Gcreate( gid, "g3.5", 0);
+    gid2 = H5Gcreate(gid, "g3.5", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
-    gid2 = H5Gcreate( gid, "g3.6", 0);
+    gid2 = H5Gcreate(gid, "g3.6", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
-    gid2 = H5Gcreate( gid, "g3.7", 0);
+    gid2 = H5Gcreate(gid, "g3.7", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
-    gid2 = H5Gcreate( gid, "g3.8", 0);
+    gid2 = H5Gcreate(gid, "g3.8", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
-    gid2 = H5Gcreate( gid, "g3.9", 0);
+    gid2 = H5Gcreate(gid, "g3.9", H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Gclose(gid2);
 
    /* Close File */

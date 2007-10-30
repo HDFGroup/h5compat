@@ -53,10 +53,10 @@ int main(int argc, char *argv[])
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Open Group g4 */
-    gid = H5Gopen(fid, "/g4");
+    gid = H5Gopen(fid, "/g4", H5P_DEFAULT);
 
    /* Open Dataspace  */
-    did = H5Dopen(gid, "dset2");
+    did = H5Dopen(gid, "dset2", H5P_DEFAULT);
 
    /* Write to Dataset dset2 */
     for (i = 0; i < 10; i++)

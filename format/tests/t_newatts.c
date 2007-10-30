@@ -60,15 +60,15 @@ int main(int argc, char *argv[])
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Open Group g4 */
-    gid = H5Gopen(fid, "/g4");
+    gid = H5Gopen(fid, "/g4", H5P_DEFAULT);
 
    /* Open Dataset dset2 */
-    did = H5Dopen(gid, "dset2");
+    did = H5Dopen(gid, "dset2", H5P_DEFAULT);
 
    /* Remove old attributes from dset2 */
     for (i = 0; i < 10; i++){
         sprintf(buf, "attr%05d", i);
-	H5Adelete2( did, ".", buf, H5P_DEFAULT);
+	H5Adelete(did, buf);
     }
 
    /* Add attributes to dset2 */
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
         dims[0] = 10;
         sprintf(buf, "attr%05d", i);
         sid = H5Screate_simple(1, dims, NULL);
-        aid = H5Acreate (did, buf, H5T_NATIVE_CHAR, sid, H5P_DEFAULT);
+        aid = H5Acreate(did, buf, H5T_NATIVE_CHAR, sid, H5P_DEFAULT, H5P_DEFAULT);
         H5Awrite(aid, H5T_NATIVE_CHAR, buf);
         H5Sclose(sid);
         H5Aclose(aid);
