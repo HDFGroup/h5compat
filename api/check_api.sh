@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # Copyright by The HDF Group.
 # All rights reserved.
@@ -335,11 +335,12 @@ TEST_H5T()
 
 ##################  INITIALIZE SCRIPT INFO  ##################
 
+HOST_NAME=`hostname | cut -f1 -d.`
 
 # Define compile scripts to use
-h5cc18="/mnt/scr1/pre-release/hdf5/v180/kagiso/bin/h5cc"
-h5cc18compat="/mnt/scr1/pre-release/hdf5/v180-compat/kagiso/bin/h5cc"
-h5cc16="/mnt/scr1/pre-release/hdf5/v16/kagiso/bin/h5cc"
+h5cc18="/mnt/scr1/pre-release/hdf5/v180/$HOST_NAME/bin/h5cc"
+h5cc18compat="/mnt/scr1/pre-release/hdf5/v180-compat/$HOST_NAME/bin/h5cc"
+h5cc16="/mnt/scr1/pre-release/hdf5/v16/$HOST_NAME/bin/h5cc"
 
 # Parse command line arguments
 if (( $# > 0 )); then

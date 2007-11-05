@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 #
 # Copyright by The HDF Group.
 # All rights reserved.
@@ -27,10 +27,11 @@
 #                                                                       	#
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+HOST_NAME=`hostname | cut -f1 -d.`
 
 # Define libraries to use
-h5cc18="/mnt/scr1/pre-release/hdf5/v180/kagiso/bin/h5cc"
-h5cc16="/mnt/scr1/pre-release/hdf5/v16/kagiso/bin/h5cc"
+h5cc18="/mnt/scr1/pre-release/hdf5/v180/$HOST_NAME/bin/h5cc"
+h5cc16="/mnt/scr1/pre-release/hdf5/v16/$HOST_NAME/bin/h5cc"
 
 # Definitions
 initfname=.h5compatrc		# personal initialization file
