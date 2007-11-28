@@ -345,8 +345,22 @@ TEST_H5T()
 
 HOST_NAME=`hostname | cut -f1 -d.`
 
+# If this script is running in one of the test directories with a suffix such as -64 or -pp it's probably best to run with binaries in a similar directory under pre-release.  An exact match is preferred, but if one with a dash can't be found, try the suffix without the dash.
+HOST_DIR=`pwd | awk -F/ '{ print $(NF-1) }'`
+
+STRLEN=${#HOST_DIR}
+
+if [[ "${HOST_DIR:0:(STRLEN-2)}" == "$HOST_NAME" || "${HOST_DIR%-*}" == "$HOST_NAME" ]];then
+   if [ -d /mnt/scr1/pre-release/hdf5/v180/$HOST_DIR ];then
+      HOST_NAME=$HOST_DIR
+   else
+      SUFF=`echo $HOST_DIR | cut -f2 -d-`
+      HOST_NAME=$HOST_NAME$SUFF
+   fi    
+fi
+
 # Define compile scripts to use
-h5cc18="/mnt/scr1/lrknox/hdf5-1-8/v180/hdf5/bin/h5cc"
+h5cc18="/mnt/scr1/pre-release/hdf5/v180/$HOST_NAME/bin/h5cc"
 h5cc18compat="/mnt/scr1/pre-release/hdf5/v180-compat/$HOST_NAME/bin/h5cc"
 h5cc16="/mnt/scr1/pre-release/hdf5/v16/$HOST_NAME/bin/h5cc"
 
