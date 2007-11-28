@@ -68,6 +68,14 @@ CHECK()
         exit 1
     fi
 
+    # Mask off version
+    sed 's/(1.8.0.*)/(1.8.0)/' <$actual >$tmp
+    ((ret = $?))
+    if ((ret != 0)); then
+        echo "sed failed ?!?!"
+        exit 1
+    fi
+
     # Check if output from test program is the same as expected output
     cmp -s $tmp $expected
     ((ret = $?))
@@ -338,7 +346,7 @@ TEST_H5T()
 HOST_NAME=`hostname | cut -f1 -d.`
 
 # Define compile scripts to use
-h5cc18="/mnt/scr1/pre-release/hdf5/v180/$HOST_NAME/bin/h5cc"
+h5cc18="/mnt/scr1/lrknox/hdf5-1-8/v180/hdf5/bin/h5cc"
 h5cc18compat="/mnt/scr1/pre-release/hdf5/v180-compat/$HOST_NAME/bin/h5cc"
 h5cc16="/mnt/scr1/pre-release/hdf5/v16/$HOST_NAME/bin/h5cc"
 
