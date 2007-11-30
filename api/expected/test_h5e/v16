@@ -1,4 +1,4 @@
-HDF5-DIAG: Error detected in HDF5 library version: 1.6.6-post0 thread 0.  Back trace follows.
+HDF5-DIAG: Error detected in HDF5 library version: 1.6.6 thread 0.  Back trace follows.
   #000: file5 line 5 in func5(): str5
     major(11): Heap layer
     minor(05): Bad value

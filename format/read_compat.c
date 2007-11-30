@@ -178,10 +178,10 @@ int check_attr(hid_t did, const char *attr_name)
 int check(int ret, const char *type, const char *name, const char *message, FILE *fp)
 {
     if (ret < 0){
-	fprintf(fp, "Error: %s %s %s\n", type, name, message);
+	fprintf(fp, "Error: %s %s %s\n", type, name, message ? message : "(null)");
     }
     else{
-	fprintf(fp, "Passed: %s %s %s\n", type, name, message);
+	fprintf(fp, "Passed: %s %s %s\n", type, name, message ? message : "(null)");
     }
 
     return ret;
