@@ -75,11 +75,11 @@ int main(int argc, char *argv[])
 
    /* Create File */
     fapl = H5Pcreate(H5P_FILE_ACCESS);
-    H5Pset_latest_format(fapl, TRUE);
+    H5Pset_format_bounds(fapl, H5F_FORMAT_LATEST, H5F_FORMAT_LATEST);
     fid = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, fapl);
     H5Fclose(fid);
 
-    H5Pset_latest_format(fapl, FALSE);
+    H5Pset_format_bounds(fapl, H5F_FORMAT_EARLIEST, H5F_FORMAT_LATEST);
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Create Group g1 */

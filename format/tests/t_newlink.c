@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
 
    /* Open File */
     fapl = H5Pcreate(H5P_FILE_ACCESS);
-    H5Pset_latest_format(fapl, TRUE);
+    H5Pset_format_bounds(fapl, H5F_FORMAT_LATEST, H5F_FORMAT_LATEST);
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Open group g3 */
