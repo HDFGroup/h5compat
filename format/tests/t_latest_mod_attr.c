@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
 
    /* Open File */
     fapl = H5Pcreate(H5P_FILE_ACCESS);
-    H5Pset_format_bounds(fapl, H5F_FORMAT_LATEST, H5F_FORMAT_LATEST);
+    H5Pset_libver_bounds(fapl, H5F_LIBVER_LATEST, H5F_LIBVER_LATEST);
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Open Group g4 */
