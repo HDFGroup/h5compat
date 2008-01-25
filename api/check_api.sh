@@ -61,7 +61,7 @@ CHECK()
     tmp="tmp.out"
 
     # Mask off version extensions and thread ID
-    sed -e 's/1.6.6.*th/1.6.6 th/' -e 's/(1.8.0.*)/(1.8.0)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
+    sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.0.*)/(1.8.0)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
     ((ret = $?))
     if ((ret != 0)); then
         echo "sed failed ?!?!"
