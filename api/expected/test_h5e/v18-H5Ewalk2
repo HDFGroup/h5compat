@@ -5,7 +5,7 @@ H5Eprint_vers = 1
 H5Epush_vers = 1
 H5Eset_auto_vers = 1
 H5Ewalk_vers = 2
-HDF5-DIAG: Error detected in HDF5 (1.8.0) thread 0:
+HDF5-DIAG: Error detected in HDF5 (1.8.x) thread 0:
   #000: file5 line 5 in func5(): str5
     major: Heap
     minor: Bad value
