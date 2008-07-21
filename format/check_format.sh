@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 #
 # Copyright by The HDF Group.
 # All rights reserved.
@@ -32,11 +32,15 @@ HOST_NAME=`hostname | cut -f1 -d.`
 # If this script is running in one of the test directories with a suffix such as -64 or -pp it's probably best to run with binaries in a similar directory under pre-release.  An exact match is preferred, but if one with a dash can't be found, try the suffix without the dash.
 HOST_DIR=`pwd | awk -F/ '{ print $(NF-1) }'`
 
-STRLEN=${#HOST_DIR}
+STRLEN=`echo "$HOST_DIR" | awk '{ print length() }'`
+STRLEN=`expr $STRLEN - 2`
 
-if [[ "${HOST_DIR:0:(STRLEN-2)}" == "$HOST_NAME" || "${HOST_DIR%-*}" == "$HOST_N
-AME" ]];then
-   if [ -d /mnt/scr1/pre-release/hdf5/v180/$HOST_DIR ];then
+HOST_TEST1=`perl -e "print substr($HOST_DIR, 0, $STRLEN);"`
+HOST_TEST2=`echo $HOST_DIR | sed -e 's/-64//' -e 's/-pp//'`
+
+#check for hostname-64 or hostname64 
+if [ "${HOST_TEST1}" = "$HOST_NAME" ] || [ "${HOST_TEST2}" = "$HOST_NAME" ];then
+   if [ -d /mnt/scr1/pre-release/hdf5/v180/$HOST_DIR ] || [ -d /mnt/scr1/pre-release/hdf5/v18/$HOST_DIR ];then
       HOST_NAME=$HOST_DIR
    else
       SUFF=`echo $HOST_DIR | cut -f2 -d-`
@@ -80,7 +84,7 @@ ErrorFile="CompatibilityError.log"
 read16()
 {
     $h5cc16 read_compat.c
-    if (($? == 0))
+    if [ $? -eq 0 ]
     then
         echo "========= Reading with v1.6 =========" > errors.log
         echo >> errors.log
@@ -95,7 +99,7 @@ read16()
 read18()
 {
     $h5cc18 -DH5_USE_16_API read_compat.c
-    if (($? == 0))
+    if [ $? -eq 0 ]
     then
         echo >> errors.log
         echo >> errors.log
@@ -114,15 +118,14 @@ CheckErrors()
 
    # Check if output from reading file is the same as expected output
     cmp -s errors.log tests/expected/$expected
-    ((ret= $? ))
-    if ((ret == 0))
-
+    ret=$?
+    if [ $ret -eq 0 ]
      # Output matched expected output
     then
 	echo "Test ran as expected"
 
      # Output file doesn't exist
-    elif ((ret == 2))
+    elif [ $ret -eq  2 ]
     then
 	 # with the -a flag a new expected file will be created
 	if [[ $AddExpected == "on" ]]
@@ -194,7 +197,7 @@ RunTest()
     echo "#################  $1  #################"
     ./gen_compat.out
     $h5cc18 tests/$Test
-    if (($? != 0))
+    if [ $? -ne 0 ]
     then
         echo "messed up compiling test/$Test"
         exit 1
@@ -210,7 +213,7 @@ RunTest()
 
 ##################  MAIN  ##################
 
-if (( $# > 0 ))
+if  [ $# -gt 0 ]
 then
     if [[ $1 == "-a" ]]
     then
@@ -222,7 +225,7 @@ fi
 $h5cc16 -o gen_compat.out gen_compat.c
 
 # Run tests
-if (($? == 0))
+if [ $? -eq 0 ]
 then
     RunTest t_newfile
     RunTest t_newgroup

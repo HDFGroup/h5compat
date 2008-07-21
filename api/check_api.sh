@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/sh
 #
 # Copyright by The HDF Group.
 # All rights reserved.
@@ -62,21 +62,21 @@ CHECK()
 
     # Mask off version extensions and thread ID
     sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.[0-9].*)/(1.8.x)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
-    ((ret = $?))
-    if ((ret != 0)); then
+    ret=$?
+    if [ $ret -ne 0 ]; then
         echo "sed failed ?!?!"
         exit 1
     fi
 
     # Check if output from test program is the same as expected output
     cmp -s $tmp $expected
-    ((ret = $?))
+    ret=$?
 
     # Check if output didn't match expected output
-    if ((ret != 0)); then
+    if [ $ret -ne 0 ]; then
 	
         # Output file doesn't exist
-        if ((ret == 2)); then
+        if [ $ret -eq  2 ]; then
             # with the -a flag a new expected file will be created
             if [[ $AddExpected == "on" ]]; then
                 echo "Expected output was not found."
@@ -133,11 +133,11 @@ CHECK()
 BUILD()
 {
     $1 $2.c
-    if (($? == 0)); then
+    if [ $? -eq 0 ]; then
 #        echo "Testing with: $1"
 #        ./a.out
         ./a.out > $2.out
-        if (($? != 0)); then
+        if [ $? -ne 0 ]; then
             echo "*FAILED*"
             echo "error running $2 with $1"
             exit 1
@@ -159,7 +159,7 @@ TEST()
     # Create aliases for the parameters
     testname=$1
     compile_options=$2
-
+ 
     TESTING "actual 1.6.x library"
     BUILD "$h5cc16 $compile_options" $testname "v16"
 
@@ -340,10 +340,14 @@ HOST_NAME=`hostname | cut -f1 -d.`
 # If this script is running in one of the test directories with a suffix such as -64 or -pp it's probably best to run with binaries in a similar directory under pre-release.  An exact match is preferred, but if one with a dash can't be found, try the suffix without the dash.
 HOST_DIR=`pwd | awk -F/ '{ print $(NF-1) }'`
 
-STRLEN=${#HOST_DIR}
+STRLEN=`echo "$HOST_DIR" | awk '{ print length() }'`
+STRLEN=`expr $STRLEN - 2`
 
-if [[ "${HOST_DIR:0:(STRLEN-2)}" == "$HOST_NAME" || "${HOST_DIR%-*}" == "$HOST_NAME" ]];then
-   if [ -d /mnt/scr1/pre-release/hdf5/v180/$HOST_DIR ];then
+HOST_TEST1=`perl -e "print substr($HOST_DIR, 0, $STRLEN);"`
+HOST_TEST2=`echo $HOST_DIR | sed -e 's/-64//' -e 's/-pp//'`
+
+if [ "${HOST_TEST1}" = "$HOST_NAME" ] || [ "${HOST_TEST2}" = "$HOST_NAME" ];then
+   if [ -d /mnt/scr1/pre-release/hdf5/v180/$HOST_DIR ] || [ -d /mnt/scr1/pre-release/hdf5/v18/$HOST_DIR ];then
       HOST_NAME=$HOST_DIR
    else
       SUFF=`echo $HOST_DIR | cut -f2 -d-`
