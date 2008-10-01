@@ -227,16 +227,20 @@ $h5cc16 -o gen_compat.out gen_compat.c
 # Run tests
 if [ $? -eq 0 ]
 then
-    RunTest t_newfile
-    RunTest t_newgroup
-    RunTest t_newdata
-    RunTest t_newlink
-    RunTest t_newtype
-    RunTest t_newatts
-    RunTest t_latest_mod_data
-    RunTest t_latest_mod_attr
-    RunTest t_latest_more_groups
-    RunTest t_index_link
+    if (RunTest t_newfile &&\
+        RunTest t_newgroup &&\
+        RunTest t_newdata &&\
+        RunTest t_newlink &&\
+        RunTest t_newtype &&\
+        RunTest t_newatts &&\
+        RunTest t_latest_mod_data &&\
+        RunTest t_latest_mod_attr &&\
+        RunTest t_latest_more_groups &&\
+        RunTest t_index_link); then
+        EXIT_VALUE=0
+    else
+        EXIT_VALUE=2
+    fi
 else
     echo "messed up compiling gen_compat.c"
 fi

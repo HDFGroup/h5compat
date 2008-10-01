@@ -407,18 +407,22 @@ echo "h5cc16 = $h5cc16"
 
 ##################  MAIN  ##################
 
-TEST_H5A
-TEST_H5D
-TEST_H5E
-TEST_H5G
-TEST_H5P
-TEST_H5R
-TEST_H5T
+if (TEST_H5A &&\
+    TEST_H5D &&\
+    TEST_H5E &&\
+    TEST_H5G &&\
+    TEST_H5P &&\
+    TEST_H5R &&\
+    TEST_H5T); then
+    EXIT_VALUE=0
+else
+    EXIT_VALUE=1
+fi
 
 ##################  CLEANUP  ##################
 
 CLEANUP
 echo
 
-exit 0
+exit $EXIT_VALUE
 
