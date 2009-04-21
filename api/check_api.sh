@@ -332,6 +332,23 @@ TEST_H5T()
     TESTAPI test_h5t "$compile_options" H5Topen2 "-DH5_USE_16_API -DH5Topen_vers=2"
 }
 
+# Runs tests for H5Z API
+#
+TEST_H5Z()
+{
+    compile_options=""
+
+    echo
+    echo "################# Testing H5Z API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5z $compile_options
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI test_h5z "$compile_options" H5Z_class1_t "-DH5Z_class_t_vers=1"
+    TESTAPI test_h5z "$compile_options" H5Z_class2_t "-DH5_USE_16_API -DH5Z_class_t_vers=2"
+}
+
 
 ##################  INITIALIZE SCRIPT INFO  ##################
 
@@ -413,7 +430,8 @@ if (TEST_H5A &&\
     TEST_H5G &&\
     TEST_H5P &&\
     TEST_H5R &&\
-    TEST_H5T); then
+    TEST_H5T &&\
+    TEST_H5Z); then
     EXIT_VALUE=0
 else
     EXIT_VALUE=1
