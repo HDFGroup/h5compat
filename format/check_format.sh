@@ -49,7 +49,7 @@ if [ "${HOST_TEST1}" = "$HOST_NAME" ] || [ "${HOST_TEST2}" = "$HOST_NAME" ];then
 fi
 
 # Define libraries to use
-h5cc18="/mnt/scr1/pre-release/hdf5/v180/$HOST_NAME/bin/h5cc"
+h5cc18="/mnt/scr1/pre-release/hdf5/v18/$HOST_NAME/bin/h5cc"
 h5cc16="/mnt/scr1/pre-release/hdf5/v16/$HOST_NAME/bin/h5cc"
 
 # Definitions
