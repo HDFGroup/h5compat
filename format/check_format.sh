@@ -252,5 +252,5 @@ rm *.o
 rm compat.h5
 echo
 
-exit 0
+exit $EXIT_VALUE
 
