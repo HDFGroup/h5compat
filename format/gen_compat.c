@@ -77,7 +77,7 @@ int main(void)
     fid = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, fapl);
 
    /* Create Group g2 */
-    gid = H5Gcreate (fid, "/g2", 0);
+    gid = H5Gcreate (fid, "/g2", (size_t)0);
 
    /* Create Datatype tid */
     dim[0] = dim[1] = dim[2] = dim[3] = 2;
@@ -105,11 +105,11 @@ int main(void)
  /* =========================================== */
 
    /* Create Group g1 */
-    gid = H5Gcreate (fid, "/g1", 0);
+    gid = H5Gcreate (fid, "/g1", (size_t)0);
     H5Gclose(gid);
 
    /* Create Group g1.1 */
-    gid = H5Gcreate (fid, "/g1/g1.1", 0);
+    gid = H5Gcreate (fid, "/g1/g1.1", (size_t)0);
 
    /* Create Dataspace */
     sdim = 6;
@@ -155,7 +155,7 @@ int main(void)
     H5Gclose(gid);
 
    /* Create Group g1.2 */
-    gid = H5Gcreate (fid, "/g1/g1.2", 0);
+    gid = H5Gcreate (fid, "/g1/g1.2", (size_t)0);
 
    /* Create Hard Link to dset1 */
     H5Glink( gid, H5G_LINK_HARD, "/g1/g1.1/dset1", "./hlink1" );
@@ -165,13 +165,13 @@ int main(void)
  /* =========================================== */
 
    /* Create Group g3 */
-    gid = H5Gcreate (fid, "/g3", 0);
+    gid = H5Gcreate (fid, "/g3", (size_t)0);
     H5Gclose(gid);
 
  /* =========================================== */
 
    /* Create Group g4 */
-    gid = H5Gcreate (fid, "/g4", 0);
+    gid = H5Gcreate (fid, "/g4", (size_t)0);
 
    /* Create Dataspace  */
     dims[0] = dims[1] = 10;
@@ -217,7 +217,7 @@ int main(void)
  /* =========================================== */
 
    /* Create Group g5 */
-    gid = H5Gcreate (fid, "/g5", 0);
+    gid = H5Gcreate (fid, "/g5", (size_t)0);
 
    /* Create Hard Link to dset2 */
     H5Glink( gid, H5G_LINK_SOFT, "/g4/dset2", "./slink1" );

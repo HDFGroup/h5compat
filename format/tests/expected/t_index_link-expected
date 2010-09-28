@@ -13,7 +13,7 @@ Passed: group g3 (null)
 Passed: dset hlink2 (through group g3)
 Error: group g4 (null)
 Passed: group g5 (null)
-Error: dset slink1 (through group g5)
+Passed: dset slink1 (through group g5)
 
 
 ========= Reading with v1.8 =========

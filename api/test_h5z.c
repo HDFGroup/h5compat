@@ -29,9 +29,11 @@ filter_func(unsigned int flags, size_t cd_nelmts,
         void **buf)
 {
     /* Prevent compiler warning */
-    if(flags && cd_nelmts && cd_values && buf_size && buf) {
-        int a = 1;
-    } /* end if */
+    flags = flags;
+    cd_nelmts = cd_nelmts;
+    cd_values = cd_values;
+    buf_size = buf_size;
+    buf = buf;
 
     return(nbytes);
 } /* end filter_func */
@@ -70,7 +72,7 @@ main(int argc, const char *argv[])
     if(H5Zregister(&filter_class) < 0) goto error;
 
     /* Add the filter to the property list */
-    if(H5Pset_filter(dcpl, 365, 0, 0, NULL) < 0) goto error;
+    if(H5Pset_filter(dcpl, 365, 0, (size_t)0, NULL) < 0) goto error;
 
     /* Close */
     if(H5Pclose(dcpl) < 0) goto error;
