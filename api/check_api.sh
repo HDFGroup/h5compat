@@ -169,11 +169,14 @@ TEST()
     TESTING "normal 1.10.x library build"
     BUILD "$h5cc110 $compile_options" $testname "v110-actual"
 
+    TESTING "normal 1.11.x library build"
+    BUILD "$h5ccdev $compile_options" $testname "vdev-actual"
+
     TESTING "1.8.x library built in 1.6.x compatibility mode"
-    BUILD "$h5cc18compat $compile_options" $testname "v18compat"
+    BUILD "$h5cc18compat $compile_options" $testname "v18-compat"
 
     TESTING "normal 1.8.x library build, with 1.6.x compatibility macro"
-    BUILD "$h5cc18 -DH5_USE_16_API $compile_options" $testname "v18macro"
+    BUILD "$h5cc18 -DH5_USE_16_API $compile_options" $testname "v18-macro"
 
     TESTING "1.10.x library built in 1.6.x compatibility mode"
     BUILD "$h5cc110compat16 $compile_options" $testname "v110-16compat"
@@ -186,6 +189,24 @@ TEST()
 
     TESTING "normal 1.10.x library build, with 1.8.x compatibility macro"
     BUILD "$h5cc110 -DH5_USE_18_API $compile_options" $testname "v110-18macro"
+
+    TESTING "1.11.x library built in 1.6.x compatibility mode"
+    BUILD "$h5ccdevcompat16 $compile_options" $testname "vdev-16compat"
+
+    TESTING "normal 1.11.x library build, with 1.6.x compatibility macro"
+    BUILD "$h5ccdev -DH5_USE_16_API $compile_options" $testname "vdev-16macro"
+
+    TESTING "1.11.x library built in 1.8.x compatibility mode"
+    BUILD "$h5ccdevcompat18 $compile_options" $testname "vdev-18compat"
+
+    TESTING "normal 1.11.x library build, with 1.8.x compatibility macro"
+    BUILD "$h5ccdev -DH5_USE_18_API $compile_options" $testname "vdev-18macro"
+
+    TESTING "1.11.x library built in 1.10.x compatibility mode"
+    BUILD "$h5ccdevcompat110 $compile_options" $testname "vdev-110compat"
+
+    TESTING "normal 1.11.x library build, with 1.10.x compatibility macro"
+    BUILD "$h5ccdev -DH5_USE_110_API $compile_options" $testname "vdev-110macro"
 }
 
 # Build test program with different API routine versions overridden
@@ -388,6 +409,10 @@ if [ "${HOST_TEST1}" = "$HOST_NAME" ] || [ "${HOST_TEST2}" = "$HOST_NAME" ];then
 fi
 
 # Define compile scripts to use
+h5ccdev="/mnt/scr1/pre-release/hdf5/vdev/$HOST_NAME/bin/h5cc"
+h5ccdevcompat16="/mnt/scr1/pre-release/hdf5/vdev/compat16/$HOST_NAME/bin/h5cc"
+h5ccdevcompat18="/mnt/scr1/pre-release/hdf5/vdev/compat18/$HOST_NAME/bin/h5cc"
+h5ccdevcompat110="/mnt/scr1/pre-release/hdf5/vdev/compat110/$HOST_NAME/bin/h5cc"
 h5cc110="/mnt/scr1/pre-release/hdf5/v110/dailytest/$HOST_NAME/bin/h5cc"
 h5cc110compat16="/mnt/scr1/pre-release/hdf5/v110/dailytest/compat16/$HOST_NAME/bin/h5cc"
 h5cc110compat18="/mnt/scr1/pre-release/hdf5/v110/dailytest/compat18/$HOST_NAME/bin/h5cc"
@@ -421,6 +446,36 @@ else
 fi
 
 # Check definitions
+if [ ! -x $h5ccdev ]; then
+    echo "h5ccdev($h5ccdev) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5ccdevcompat110 ]; then
+    echo "h5ccdevcompat110($h5ccdevcompat110) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5ccdevcompat18 ]; then
+    echo "h5ccdevcompat18($h5ccdevcompat18) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5ccdevcompat16 ]; then
+    echo "h5ccdevcompat16($h5ccdevcompat16) not found or not executable.  Abort"
+    exit 1
+fi
+
+if [ ! -x $h5cc110 ]; then
+    echo "h5cc110($h5cc110) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc110compat18 ]; then
+    echo "h5cc110compat18($h5cc11018compat) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc110compat16 ]; then
+    echo "h5cc110compat16($h5cc110compat16) not found or not executable.  Abort"
+    exit 1
+fi
+
 if [ ! -x $h5cc18 ]; then
     echo "h5cc18($h5cc18) not found or not executable.  Abort"
     exit 1
@@ -429,6 +484,7 @@ if [ ! -x $h5cc18compat ]; then
     echo "h5cc18compat($h5cc18compat) not found or not executable.  Abort"
     exit 1
 fi
+
 if [ ! -x $h5cc16 ]; then
     echo "h5cc16($h5cc16) not found or not executable.  Abort"
     exit 1
@@ -436,11 +492,15 @@ fi
 
 echo
 echo "Testing scripts used:"
+echo "h5ccdev = $h5ccdev"
+echo "h5ccdevcompat110 = $h5ccdevcompat110"
+echo "h5ccdevcompat18 = $h5ccdevcompat18"
+echo "h5ccdevcompat16 = $h5ccdevcompat16"
+echo "h5cc110 = $h5cc110"
+echo "h5cc110compat18 = $h5cc110compat18"
+echo "h5cc110compat16 = $h5cc110compat16"
 echo "h5cc18 = $h5cc18"
 echo "h5cc18compat = $h5cc18compat"
-echo "h5cc110 = $h5cc110"
-echo "h5cc110compat16 = $h5cc110compat16"
-echo "h5cc110compat18 = $h5cc110compat18"
 echo "h5cc16 = $h5cc16"
 
 
