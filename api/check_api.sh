@@ -286,6 +286,23 @@ TEST_H5E()
     TESTAPI test_h5e "$compile_options" H5Eprint2 "-DH5_USE_16_API -DH5Eprint_vers=2"
 }
 
+# Runs tests for H5F API
+#
+TEST_H5F()
+{
+    compile_options=""
+
+    echo
+    echo "################# Testing H5F API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5f $compile_options
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI test_h5f "$compile_options" H5Fget_info1 "-DH5Fget_info_vers=1"
+    TESTAPI test_h5f "$compile_options" H5Fget_info2 "-DH5_USE_18_API -DH5Fget_open_vers=2"
+}
+
 # Runs tests for H5G API
 #
 TEST_H5G()
@@ -509,6 +526,7 @@ echo "h5cc16 = $h5cc16"
 if (TEST_H5A &&\
     TEST_H5D &&\
     TEST_H5E &&\
+    TEST_H5F &&\
     TEST_H5G &&\
     TEST_H5P &&\
     TEST_H5R &&\
