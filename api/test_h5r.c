@@ -31,10 +31,18 @@ main(int argc, const char *argv[])
     hid_t	sid;            /* Dataspace ID			*/
     hsize_t	dims[] = {SPACE_DIM};
     hobj_ref_t  wbuf[SPACE_DIM];       /* Buffer to write to disk */
+    unsigned int data[4] = {1, 22222, 9876543, 23456789};
+
 #if defined(H5Rget_obj_type_vers) && H5Rget_obj_type_vers > 1
-    H5O_type_t  obj_type;       /* Object type */
+    H5O_type_t  obj1_type;       /* Object type */
+    H5O_type_t  obj2_type;
+    H5O_type_t  obj3_type;
+    H5O_type_t  obj4_type;
 #else /* H5Rget_obj_type */
-    H5G_obj_t   obj_type;       /* Object type */
+    H5G_obj_t   obj1_type;       /* Object type */
+    H5G_obj_t  obj2_type;
+    H5G_obj_t  obj3_type;
+    H5G_obj_t  obj4_type;
 #endif /* H5Rget_obj_type */
 
     /* Shut compiler up */
@@ -45,6 +53,9 @@ main(int argc, const char *argv[])
 #if H5_VERS_MINOR >= 8
     printf("H5Rget_obj_type_vers = %d\n", H5Rget_obj_type_vers);
 #endif /* H5_VERS_MINOR >= 8 */
+#if H5_VERS_MINOR >= 10
+    printf("H5Rdereference_vers = %d\n", H5Rdereference_vers);
+#endif
 
     /* Create file */
     if((fid = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
@@ -73,24 +84,63 @@ main(int argc, const char *argv[])
 
     /* Check type of references */
 #if defined(H5Rget_obj_type_vers) && H5Rget_obj_type_vers > 1
-    if(H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[0], &obj_type) < 0) goto error;
-    if(obj_type != H5O_TYPE_DATASET) goto error;
-    if(H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[1], &obj_type) < 0) goto error;
-    if(obj_type != H5O_TYPE_DATASET) goto error;
-    if(H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[2], &obj_type) < 0) goto error;
-    if(obj_type != H5O_TYPE_DATASET) goto error;
-    if(H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[3], &obj_type) < 0) goto error;
-    if(obj_type != H5O_TYPE_DATASET) goto error;
+    if(H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[0], &obj1_type) < 0) goto error;
+    if(obj1_type != H5O_TYPE_DATASET) goto error;
+    if(H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[1], &obj2_type) < 0) goto error;
+    if(obj2_type != H5O_TYPE_DATASET) goto error;
+    if(H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[2], &obj3_type) < 0) goto error;
+    if(obj3_type != H5O_TYPE_DATASET) goto error;
+    if(H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[3], &obj4_type) < 0) goto error;
+    if(obj4_type != H5O_TYPE_DATASET) goto error;
 #else /* H5Rget_obj_type_vers */
-    if((obj_type = H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[0])) < 0) goto error;
-    if(obj_type != H5G_DATASET) goto error;
-    if((obj_type = H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[1])) < 0) goto error;
-    if(obj_type != H5G_DATASET) goto error;
-    if((obj_type = H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[2])) < 0) goto error;
-    if(obj_type != H5G_DATASET) goto error;
-    if((obj_type = H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[3])) < 0) goto error;
-    if(obj_type != H5G_DATASET) goto error;
+    if((obj1_type = H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[0])) < 0) goto error;
+    if(obj1_type != H5G_DATASET) goto error;
+    if((obj2_type = H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[1])) < 0) goto error;
+    if(obj2_type != H5G_DATASET) goto error;
+    if((obj3_type = H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[2])) < 0) goto error;
+    if(obj3_type != H5G_DATASET) goto error;
+    if((obj4_type = H5Rget_obj_type(fid, H5R_OBJECT, &wbuf[3])) < 0) goto error;
+    if(obj4_type != H5G_DATASET) goto error;
 #endif /* H5Rget_obj_type_vers */
+
+    /* Write data to datasets via references */
+#if defined(H5Rdereference_vers) && H5Rdereference_vers > 1
+    if((dsid = H5Rdereference(fid, H5P_DEFAULT, H5R_OBJECT, &wbuf[0])) < 0)
+        goto error;
+    if((H5Dwrite(dsid, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data)) < 0)
+        goto error;
+    if((dsid = H5Rdereference(fid, H5P_DEFAULT, H5R_OBJECT, &wbuf[1])) < 0)
+        goto error;
+    if((H5Dwrite(dsid, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data)) < 0)
+        goto error;
+    if((dsid = H5Rdereference(fid, H5P_DEFAULT, H5R_OBJECT, &wbuf[2])) < 0)
+        goto error;
+    if((H5Dwrite(dsid, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data)) < 0)
+        goto error;
+    if((dsid = H5Rdereference(fid, H5P_DEFAULT, H5R_OBJECT, &wbuf[3])) < 0)
+        goto error;
+    if((H5Dwrite(dsid, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data)) < 0)
+        goto error;
+#else
+    if((dsid = H5Rdereference(fid, H5R_OBJECT, &wbuf[0])) < 0)
+        goto error;
+    if((H5Dwrite(dsid, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data)) < 0)
+        goto error;
+    if((dsid = H5Rdereference(fid, H5R_OBJECT, &wbuf[1])) < 0)
+        goto error;
+    if((H5Dwrite(dsid, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data)) < 0)
+        goto error;
+    if((dsid = H5Rdereference(fid, H5R_OBJECT, &wbuf[2])) < 0)
+        goto error;
+    if((H5Dwrite(dsid, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data)) < 0)
+        goto error;
+    if((dsid = H5Rdereference(fid, H5R_OBJECT, &wbuf[3])) < 0)
+        goto error;
+    if((H5Dwrite(dsid, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data)) < 0)
+        goto error;
+
+#endif
+
 
     /* Close file */
     if(H5Fclose(fid) < 0) goto error;
