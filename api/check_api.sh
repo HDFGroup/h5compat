@@ -223,6 +223,34 @@ TESTAPI()
     BUILD "$h5cc18 $compat_options $compile_options" $testname "v18-$suffix"
 }
 
+# Build test program with different API routine versions overridden
+#
+TESTAPI110()
+{
+    # Create aliases for the parameters
+    testname=$1
+    compile_options=$2
+    suffix=$3
+    compat_options=$4
+
+    TESTING "normal 1.10.x, with: $compat_options"
+    BUILD "$h5cc110 $compat_options $compile_options" $testname "v110-$suffix"
+}
+
+# Build test program with different API routine versions overridden
+#
+TESTAPI112()
+{
+    # Create aliases for the parameters
+    testname=$1
+    compile_options=$2
+    suffix=$3
+    compat_options=$4
+
+    TESTING "normal 1.12.x, with: $compat_options"
+    BUILD "$h5ccdev $compat_options $compile_options" $testname "vdev-$suffix"
+}
+
 # Runs tests for H5A API
 #
 TEST_H5A()
@@ -299,8 +327,8 @@ TEST_H5F()
     TEST test_h5f $compile_options
 
     # Run tests for overriding version of individual API routines
-    TESTAPI test_h5f "$compile_options" H5Fget_info1 "-DH5Fget_info_vers=1"
-    TESTAPI test_h5f "$compile_options" H5Fget_info2 "-DH5_USE_18_API -DH5Fget_open_vers=2"
+    TESTAPI110 test_h5f "$compile_options" H5Fget_info1 "-DH5Fget_info_vers=1"
+    TESTAPI110 test_h5f "$compile_options" H5Fget_info2 "-DH5_USE_18_API -DH5Fget_open_vers=2"
 }
 
 # Runs tests for H5G API
@@ -320,6 +348,31 @@ TEST_H5G()
     TESTAPI test_h5g "$compile_options" H5Gcreate2 "-DH5_USE_16_API -DH5Gcreate_vers=2"
     TESTAPI test_h5g "$compile_options" H5Gopen1 "-DH5Gopen_vers=1"
     TESTAPI test_h5g "$compile_options" H5Gopen2 "-DH5_USE_16_API -DH5Gopen_vers=2"
+}
+
+# Runs tests for H5O API
+#
+TEST_H5O()
+{
+    compile_options="-DH5Dcreate_vers=1"
+
+    echo
+    echo "################# Testing H5O API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5o $compile_options
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info1 "-DH5Oget_info_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info2 "-DH5_USE_110_API -DH5Oget_info_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_name1 "-DH5Oget_info_by_name_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_name2 "-DH5_USE_110_API -DH5Oget_info_by_name_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_idx1 "-DH5Oget_info_by_idx_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_idx2 "-DH5_USE_110_API -DH5Oget_info_by_idx_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit1 "-DH5Ovisit_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit2 "-DH5_USE_110_API -DH5Ovisit_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit_by_name1 "-DH5Ovisit_by_name_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit_by_name2 "-DH5_USE_110_API -DH5Ovisit_by_name_vers=2"
 }
 
 # Runs tests for H5P API
@@ -360,6 +413,8 @@ TEST_H5R()
     # Run tests for overriding version of individual API routines
     TESTAPI test_h5r "$compile_options" H5Rget_obj_type1 "-DH5Rget_obj_type_vers=1"
     TESTAPI test_h5r "$compile_options" H5Rget_obj_type2 "-DH5_USE_16_API -DH5Rget_obj_type_vers=2"
+    TESTAPI112 test_h5r "$compile_options" H5Rdereference "-DH5Rdereference_vers=1"
+    TESTAPI112 test_h5r "$compile_options" H5Rdereference "-DH5Rdereference_vers=1"
 }
 
 # Runs tests for H5T API
@@ -528,6 +583,7 @@ if (TEST_H5A &&\
     TEST_H5E &&\
     TEST_H5F &&\
     TEST_H5G &&\
+    TEST_H5O &&\
     TEST_H5P &&\
     TEST_H5R &&\
     TEST_H5T &&\
