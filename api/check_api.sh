@@ -396,6 +396,9 @@ TEST_H5P()
     TESTAPI test_h5p "$compile_options" H5Pget_filter2 "-DH5_USE_16_API -DH5Pget_filter_vers=2"
     TESTAPI test_h5p "$compile_options" H5Pget_filter_by_id1 "-DH5Pget_filter_by_id_vers=1"
     TESTAPI test_h5p "$compile_options" H5Pget_filter_by_id2 "-DH5_USE_16_API -DH5Pget_filter_by_id_vers=2"
+
+    TESTAPI112 test_h5p "$compile_options" H5Pencode1 "-DH5Pencode_vers=1"
+    TESTAPI112 test_h5p "$compile_options" H5Pencode2 "-DH5_USE_110_API -DH5Pencode_vers=2"
 }
 
 # Runs tests for H5R API
@@ -413,8 +416,25 @@ TEST_H5R()
     # Run tests for overriding version of individual API routines
     TESTAPI test_h5r "$compile_options" H5Rget_obj_type1 "-DH5Rget_obj_type_vers=1"
     TESTAPI test_h5r "$compile_options" H5Rget_obj_type2 "-DH5_USE_16_API -DH5Rget_obj_type_vers=2"
-    TESTAPI112 test_h5r "$compile_options" H5Rdereference "-DH5Rdereference_vers=1"
-    TESTAPI112 test_h5r "$compile_options" H5Rdereference "-DH5Rdereference_vers=1"
+    TESTAPI112 test_h5r "$compile_options" H5Rdereference1 "-DH5Rdereference_vers=1"
+    TESTAPI112 test_h5r "$compile_options" H5Rdereference2 "-DH5_USE_110_API -DH5Rdereference_vers=2"
+}
+
+# Runs tests for H5S API
+#
+TEST_H5S()
+{
+    compile_options=""
+
+    echo
+    echo "################# Testing H5S API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5s $compile_options
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI112 test_h5s "$compile_options" H5Sencode1 "-DH5S_vers=1"
+    TESTAPI112 test_h5s "$compile_options" H5Sencode2 "-DH5_USE_110_API -DH5Sencode_vers=2"
 }
 
 # Runs tests for H5T API
@@ -586,6 +606,7 @@ if (TEST_H5A &&\
     TEST_H5O &&\
     TEST_H5P &&\
     TEST_H5R &&\
+    TEST_H5S &&\
     TEST_H5T &&\
     TEST_H5Z); then
     EXIT_VALUE=0
