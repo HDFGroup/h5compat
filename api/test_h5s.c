@@ -88,7 +88,7 @@ main(int argc, const char *argv[])
 #else
     if((H5Sencode(sid, NULL, &sbuf_size)) < 0)
         goto error;
-#endif
+#endif /* H5Sencode_vers */
 
     H5Sclose(sid);
 

@@ -152,8 +152,8 @@ main(int argc, const char *argv[])
 #else
     if((H5Pencode(dcpl, NULL, &nalloc)) < 0 )
         goto error;
-#endif
-#endif
+#endif /* H5Pencode_vers */
+#endif /* H5_VERS_MINOR > 8 */
 
     /* Close dataset creation property list */
     if(H5Pclose(dcpl) < 0) goto error;

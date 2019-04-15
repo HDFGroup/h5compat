@@ -55,7 +55,7 @@ main(int argc, const char *argv[])
 #endif /* H5_VERS_MINOR >= 8 */
 #if H5_VERS_MINOR >= 10
     printf("H5Rdereference_vers = %d\n", H5Rdereference_vers);
-#endif
+#endif /* H5_VERS_MINOR >= 10 */
 
     /* Create file */
     if((fid = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
@@ -139,7 +139,7 @@ main(int argc, const char *argv[])
     if((H5Dwrite(dsid, H5T_NATIVE_UINT, H5S_ALL, H5S_ALL, H5P_DEFAULT, data)) < 0)
         goto error;
 
-#endif
+#endif /* H5Rdereference_vers */
 
 
     /* Close file */
