@@ -46,6 +46,8 @@ main(int argc, const char *argv[])
     hid_t	cid;		/* Generic Property class ID */
     hid_t	lid;		/* Generic Property list ID */
     size_t	nprops;		/* Number of properties */
+    size_t      nalloc;         /* Number of bytes to be allocated for 
+                                   buffer for encoded property list */
 
     /* Shut compiler up */
     argc = argc;
@@ -58,6 +60,11 @@ main(int argc, const char *argv[])
     printf("H5Pinsert_vers = %d\n", H5Pinsert_vers);
     printf("H5Pregister_vers = %d\n", H5Pregister_vers);
 #endif /* H5_VERS_MINOR >= 8 */
+
+#if H5_VERS_MINOR > 10
+    printf("H5Pencode_vers = %d\n", H5Pencode_vers);
+#endif /* H5_VERS_MINOR > 10 */
+
 
     /* Create a new generic class, derived from the root of the class hierarchy */
     if((cid = H5Pcreate_class(ROOT_CLASS, CLASS_NAME, NULL, NULL, NULL, NULL, NULL, NULL)) < 0) goto error;
@@ -136,6 +143,17 @@ main(int argc, const char *argv[])
         goto error;
 }
 #endif /* H5_HAVE_FILTER_DEFLATE */
+
+#if H5_VERS_MINOR > 8
+/* encode property list */
+#if defined(H5Pencode_vers) && H5Pencode_vers > 1
+    if((H5Pencode(dcpl, NULL, &nalloc, H5P_DEFAULT)) < 0 )
+        goto error;
+#else
+    if((H5Pencode(dcpl, NULL, &nalloc)) < 0 )
+        goto error;
+#endif /* H5Pencode_vers */
+#endif /* H5_VERS_MINOR > 8 */
 
     /* Close dataset creation property list */
     if(H5Pclose(dcpl) < 0) goto error;

@@ -200,6 +200,7 @@ main(int argc, const char *argv[])
     return(0);
 
 error:
+    fprintf(stderr, "H5E test failed, returning '1'.");
     return(1);
 }
 

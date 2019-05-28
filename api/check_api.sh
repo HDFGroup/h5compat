@@ -61,7 +61,7 @@ CHECK()
     tmp="tmp.out"
 
     # Mask off version extensions and thread ID
-    sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.[0-9].*)/(1.8.x)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
+    sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.[0-9].*)/(1.8.x)/' -e 's/(1.10.[0-9].*)/(1.10.x)/' -e 's/(1.11.[0-9].*)/(1.11.x)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
     ret=$?
     if [ $ret -ne 0 ]; then
         echo "sed failed ?!?!"
@@ -166,11 +166,47 @@ TEST()
     TESTING "normal 1.8.x library build"
     BUILD "$h5cc18 $compile_options" $testname "v18-actual"
 
+    TESTING "normal 1.10.x library build"
+    BUILD "$h5cc110 $compile_options" $testname "v110-actual"
+
+    TESTING "normal 1.11.x library build"
+    BUILD "$h5ccdev $compile_options" $testname "vdev-actual"
+
     TESTING "1.8.x library built in 1.6.x compatibility mode"
     BUILD "$h5cc18compat $compile_options" $testname "v18-compat"
 
     TESTING "normal 1.8.x library build, with 1.6.x compatibility macro"
     BUILD "$h5cc18 -DH5_USE_16_API $compile_options" $testname "v18-macro"
+
+    TESTING "1.10.x library built in 1.6.x compatibility mode"
+    BUILD "$h5cc110compat16 $compile_options" $testname "v110-16compat"
+
+    TESTING "normal 1.10.x library build, with 1.6.x compatibility macro"
+    BUILD "$h5cc110 -DH5_USE_16_API $compile_options" $testname "v110-16macro"
+
+    TESTING "1.10.x library built in 1.8.x compatibility mode"
+    BUILD "$h5cc110compat18 $compile_options" $testname "v110-18compat"
+
+    TESTING "normal 1.10.x library build, with 1.8.x compatibility macro"
+    BUILD "$h5cc110 -DH5_USE_18_API $compile_options" $testname "v110-18macro"
+
+    TESTING "1.11.x library built in 1.6.x compatibility mode"
+    BUILD "$h5ccdevcompat16 $compile_options" $testname "vdev-16compat"
+
+    TESTING "normal 1.11.x library build, with 1.6.x compatibility macro"
+    BUILD "$h5ccdev -DH5_USE_16_API $compile_options" $testname "vdev-16macro"
+
+    TESTING "1.11.x library built in 1.8.x compatibility mode"
+    BUILD "$h5ccdevcompat18 $compile_options" $testname "vdev-18compat"
+
+    TESTING "normal 1.11.x library build, with 1.8.x compatibility macro"
+    BUILD "$h5ccdev -DH5_USE_18_API $compile_options" $testname "vdev-18macro"
+
+    TESTING "1.11.x library built in 1.10.x compatibility mode"
+    BUILD "$h5ccdevcompat110 $compile_options" $testname "vdev-110compat"
+
+    TESTING "normal 1.11.x library build, with 1.10.x compatibility macro"
+    BUILD "$h5ccdev -DH5_USE_110_API $compile_options" $testname "vdev-110macro"
 }
 
 # Build test program with different API routine versions overridden
@@ -185,6 +221,34 @@ TESTAPI()
 
     TESTING "normal 1.8.x, with: $compat_options"
     BUILD "$h5cc18 $compat_options $compile_options" $testname "v18-$suffix"
+}
+
+# Build test program with different API routine versions overridden
+#
+TESTAPI110()
+{
+    # Create aliases for the parameters
+    testname=$1
+    compile_options=$2
+    suffix=$3
+    compat_options=$4
+
+    TESTING "normal 1.10.x, with: $compat_options"
+    BUILD "$h5cc110 $compat_options $compile_options" $testname "v110-$suffix"
+}
+
+# Build test program with different API routine versions overridden
+#
+TESTAPI112()
+{
+    # Create aliases for the parameters
+    testname=$1
+    compile_options=$2
+    suffix=$3
+    compat_options=$4
+
+    TESTING "normal 1.12.x, with: $compat_options"
+    BUILD "$h5ccdev $compat_options $compile_options" $testname "vdev-$suffix"
 }
 
 # Runs tests for H5A API
@@ -250,6 +314,23 @@ TEST_H5E()
     TESTAPI test_h5e "$compile_options" H5Eprint2 "-DH5_USE_16_API -DH5Eprint_vers=2"
 }
 
+# Runs tests for H5F API
+#
+TEST_H5F()
+{
+    compile_options=""
+
+    echo
+    echo "################# Testing H5F API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5f $compile_options
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI110 test_h5f "$compile_options" H5Fget_info1 "-DH5Fget_info_vers=1"
+    TESTAPI110 test_h5f "$compile_options" H5Fget_info2 "-DH5_USE_18_API -DH5Fget_open_vers=2"
+}
+
 # Runs tests for H5G API
 #
 TEST_H5G()
@@ -267,6 +348,31 @@ TEST_H5G()
     TESTAPI test_h5g "$compile_options" H5Gcreate2 "-DH5_USE_16_API -DH5Gcreate_vers=2"
     TESTAPI test_h5g "$compile_options" H5Gopen1 "-DH5Gopen_vers=1"
     TESTAPI test_h5g "$compile_options" H5Gopen2 "-DH5_USE_16_API -DH5Gopen_vers=2"
+}
+
+# Runs tests for H5O API
+#
+TEST_H5O()
+{
+    compile_options="-DH5Dcreate_vers=1"
+
+    echo
+    echo "################# Testing H5O API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5o $compile_options
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info1 "-DH5Oget_info_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info2 "-DH5_USE_110_API -DH5Oget_info_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_name1 "-DH5Oget_info_by_name_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_name2 "-DH5_USE_110_API -DH5Oget_info_by_name_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_idx1 "-DH5Oget_info_by_idx_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_idx2 "-DH5_USE_110_API -DH5Oget_info_by_idx_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit1 "-DH5Ovisit_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit2 "-DH5_USE_110_API -DH5Ovisit_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit_by_name1 "-DH5Ovisit_by_name_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit_by_name2 "-DH5_USE_110_API -DH5Ovisit_by_name_vers=2"
 }
 
 # Runs tests for H5P API
@@ -290,6 +396,9 @@ TEST_H5P()
     TESTAPI test_h5p "$compile_options" H5Pget_filter2 "-DH5_USE_16_API -DH5Pget_filter_vers=2"
     TESTAPI test_h5p "$compile_options" H5Pget_filter_by_id1 "-DH5Pget_filter_by_id_vers=1"
     TESTAPI test_h5p "$compile_options" H5Pget_filter_by_id2 "-DH5_USE_16_API -DH5Pget_filter_by_id_vers=2"
+
+    TESTAPI112 test_h5p "$compile_options" H5Pencode1 "-DH5Pencode_vers=1"
+    TESTAPI112 test_h5p "$compile_options" H5Pencode2 "-DH5_USE_110_API -DH5Pencode_vers=2"
 }
 
 # Runs tests for H5R API
@@ -307,6 +416,25 @@ TEST_H5R()
     # Run tests for overriding version of individual API routines
     TESTAPI test_h5r "$compile_options" H5Rget_obj_type1 "-DH5Rget_obj_type_vers=1"
     TESTAPI test_h5r "$compile_options" H5Rget_obj_type2 "-DH5_USE_16_API -DH5Rget_obj_type_vers=2"
+    TESTAPI112 test_h5r "$compile_options" H5Rdereference1 "-DH5Rdereference_vers=1"
+    TESTAPI112 test_h5r "$compile_options" H5Rdereference2 "-DH5_USE_110_API -DH5Rdereference_vers=2"
+}
+
+# Runs tests for H5S API
+#
+TEST_H5S()
+{
+    compile_options=""
+
+    echo
+    echo "################# Testing H5S API #################"
+
+    # Run "entire library API" tests
+    TEST test_h5s $compile_options
+
+    # Run tests for overriding version of individual API routines
+    TESTAPI112 test_h5s "$compile_options" H5Sencode1 "-DH5S_vers=1"
+    TESTAPI112 test_h5s "$compile_options" H5Sencode2 "-DH5_USE_110_API -DH5Sencode_vers=2"
 }
 
 # Runs tests for H5T API
@@ -373,9 +501,17 @@ if [ "${HOST_TEST1}" = "$HOST_NAME" ] || [ "${HOST_TEST2}" = "$HOST_NAME" ];then
 fi
 
 # Define compile scripts to use
+h5ccdev="/mnt/scr1/pre-release/hdf5/vdev/$HOST_NAME/bin/h5cc"
+h5ccdevcompat16="/mnt/scr1/pre-release/hdf5/vdev/compat16/$HOST_NAME/bin/h5cc"
+h5ccdevcompat18="/mnt/scr1/pre-release/hdf5/vdev/compat18/$HOST_NAME/bin/h5cc"
+h5ccdevcompat110="/mnt/scr1/pre-release/hdf5/vdev/compat110/$HOST_NAME/bin/h5cc"
+h5cc110="/mnt/scr1/pre-release/hdf5/v110/$HOST_NAME/bin/h5cc"
+h5cc110compat16="/mnt/scr1/pre-release/hdf5/v110/compat16/$HOST_NAME/bin/h5cc"
+h5cc110compat18="/mnt/scr1/pre-release/hdf5/v110/compat18/$HOST_NAME/bin/h5cc"
 h5cc18="/mnt/scr1/pre-release/hdf5/v18/$HOST_NAME/bin/h5cc"
 h5cc18compat="/mnt/scr1/pre-release/hdf5/v18/compat/$HOST_NAME/bin/h5cc"
 h5cc16="/mnt/scr1/pre-release/hdf5/v16/$HOST_NAME/bin/h5cc"
+
 
 # Parse command line arguments
 if (( $# > 0 )); then
@@ -402,6 +538,36 @@ else
 fi
 
 # Check definitions
+if [ ! -x $h5ccdev ]; then
+    echo "h5ccdev($h5ccdev) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5ccdevcompat110 ]; then
+    echo "h5ccdevcompat110($h5ccdevcompat110) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5ccdevcompat18 ]; then
+    echo "h5ccdevcompat18($h5ccdevcompat18) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5ccdevcompat16 ]; then
+    echo "h5ccdevcompat16($h5ccdevcompat16) not found or not executable.  Abort"
+    exit 1
+fi
+
+if [ ! -x $h5cc110 ]; then
+    echo "h5cc110($h5cc110) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc110compat18 ]; then
+    echo "h5cc110compat18($h5cc11018compat) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc110compat16 ]; then
+    echo "h5cc110compat16($h5cc110compat16) not found or not executable.  Abort"
+    exit 1
+fi
+
 if [ ! -x $h5cc18 ]; then
     echo "h5cc18($h5cc18) not found or not executable.  Abort"
     exit 1
@@ -410,6 +576,7 @@ if [ ! -x $h5cc18compat ]; then
     echo "h5cc18compat($h5cc18compat) not found or not executable.  Abort"
     exit 1
 fi
+
 if [ ! -x $h5cc16 ]; then
     echo "h5cc16($h5cc16) not found or not executable.  Abort"
     exit 1
@@ -417,6 +584,13 @@ fi
 
 echo
 echo "Testing scripts used:"
+echo "h5ccdev = $h5ccdev"
+echo "h5ccdevcompat110 = $h5ccdevcompat110"
+echo "h5ccdevcompat18 = $h5ccdevcompat18"
+echo "h5ccdevcompat16 = $h5ccdevcompat16"
+echo "h5cc110 = $h5cc110"
+echo "h5cc110compat18 = $h5cc110compat18"
+echo "h5cc110compat16 = $h5cc110compat16"
 echo "h5cc18 = $h5cc18"
 echo "h5cc18compat = $h5cc18compat"
 echo "h5cc16 = $h5cc16"
@@ -427,9 +601,12 @@ echo "h5cc16 = $h5cc16"
 if (TEST_H5A &&\
     TEST_H5D &&\
     TEST_H5E &&\
+    TEST_H5F &&\
     TEST_H5G &&\
+    TEST_H5O &&\
     TEST_H5P &&\
     TEST_H5R &&\
+    TEST_H5S &&\
     TEST_H5T &&\
     TEST_H5Z); then
     EXIT_VALUE=0
