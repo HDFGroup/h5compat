@@ -61,7 +61,7 @@ CHECK()
     tmp="tmp.out"
 
     # Mask off version extensions and thread ID
-    sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.[0-9].*)/(1.8.x)/' -e 's/(1.10.[0-9].*)/(1.10.x)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
+    sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.[0-9].*)/(1.8.x)/' -e 's/(1.10.[0-9].*)/(1.10.x)/' -e 's/(1.11.[0-9].*)/(1.11.x)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
     ret=$?
     if [ $ret -ne 0 ]; then
         echo "sed failed ?!?!"
@@ -505,9 +505,9 @@ h5ccdev="/mnt/scr1/pre-release/hdf5/vdev/$HOST_NAME/bin/h5cc"
 h5ccdevcompat16="/mnt/scr1/pre-release/hdf5/vdev/compat16/$HOST_NAME/bin/h5cc"
 h5ccdevcompat18="/mnt/scr1/pre-release/hdf5/vdev/compat18/$HOST_NAME/bin/h5cc"
 h5ccdevcompat110="/mnt/scr1/pre-release/hdf5/vdev/compat110/$HOST_NAME/bin/h5cc"
-h5cc110="/mnt/scr1/pre-release/hdf5/v110/dailytest/$HOST_NAME/bin/h5cc"
-h5cc110compat16="/mnt/scr1/pre-release/hdf5/v110/dailytest/compat16/$HOST_NAME/bin/h5cc"
-h5cc110compat18="/mnt/scr1/pre-release/hdf5/v110/dailytest/compat18/$HOST_NAME/bin/h5cc"
+h5cc110="/mnt/scr1/pre-release/hdf5/v110/$HOST_NAME/bin/h5cc"
+h5cc110compat16="/mnt/scr1/pre-release/hdf5/v110/compat16/$HOST_NAME/bin/h5cc"
+h5cc110compat18="/mnt/scr1/pre-release/hdf5/v110/compat18/$HOST_NAME/bin/h5cc"
 h5cc18="/mnt/scr1/pre-release/hdf5/v18/$HOST_NAME/bin/h5cc"
 h5cc18compat="/mnt/scr1/pre-release/hdf5/v18/compat/$HOST_NAME/bin/h5cc"
 h5cc16="/mnt/scr1/pre-release/hdf5/v16/$HOST_NAME/bin/h5cc"

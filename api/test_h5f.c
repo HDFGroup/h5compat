@@ -32,8 +32,14 @@ main(int argc, const char *argv[])
 
     /* v1.6 didn't didn't have H5Fget_info function or H5F_info_t structure */
 #if H5_VERS_MINOR > 6
+    /* H5F_info_t was not versioned in v1.8 */
+#if H5_VERS_MINOR == 8
     H5F_info_t *file_info;
-
+#elif defined(H5Fget_info_vers) && H5Fget_info_vers > 1
+    H5F_info2_t *file_info;
+#else
+    H5F_info1_t *file_info;
+#endif /* H5_VERS_MINOR == 8 / H5Fget_info_vers */
 
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 10
