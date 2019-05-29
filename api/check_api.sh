@@ -25,7 +25,21 @@
 #	    - The h5cc script is used from a "normal" 1.6.x build		#
 #	    - The h5cc script from a 1.8.x distribution built with the		#
 #		 --with-default-api-version=v16 flag				#
-#                                                                       	#
+#                                                                               #
+# Extended May 2019 to also use h5cc scripts from 1.10.x built with the         #
+#                --with-default-api-version=v16 flag                            #    
+#                --with-default-api-version=v18 flag                            #
+#             and h5cc scripts from the develop branch (1.11/1.12) with         #
+#                --with-default-api-version=v16                                 #
+#                --with-default-api-version=v18                                 #
+#                --with-default-api-version=v110                                #
+#             flags.                                                            #
+#             Tests also run wi9th the "normal" builds and the                  #
+#                -DH5_USE_16_API                                                #
+#                -DH5_USE_18_API                                                #
+#                -DH5_USE_110_API                                               #
+#             macros.                                                           #  
+#                                                                               #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
