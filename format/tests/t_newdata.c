@@ -16,6 +16,13 @@
 
 #define FILENAME "compat.h5"
 
+/* HDF5 v1.8 defined H5F_LIBVER_18, but doesn't have H5F_LIBVER_V18.  These
+ * tests originally set libver_bounds to H5F_LIBVER_LATEST, H5F_LIBVER_LATEST,
+ * which is appropriate for v1.8, but for v1.10 and later, we need to set
+ * them to H5F_LIBVER_V18, H5F_LIBVER_LATEST.  In order to allow compiling
+ * the part of the if(H5F_LIBVER_LATEST > 1) for the later versions with v1.8
+ * this define is added.
+ */
 #if defined(H5F_LIBVER_18)
 #define H5F_LIBVER_V18 H5F_LIBVER_18
 #endif

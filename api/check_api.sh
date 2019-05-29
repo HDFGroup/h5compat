@@ -34,7 +34,7 @@
 #                --with-default-api-version=v18                                 #
 #                --with-default-api-version=v110                                #
 #             flags.                                                            #
-#             Tests also run wi9th the "normal" builds and the                  #
+#             Tests also run with the "normal" builds and the                   #
 #                -DH5_USE_16_API                                                #
 #                -DH5_USE_18_API                                                #
 #                -DH5_USE_110_API                                               #
