@@ -16,6 +16,9 @@
 
 #define FILENAME "compat.h5"
 
+#if defined(H5F_LIBVER_18)
+#define H5F_LIBVER_V18 H5F_LIBVER_18
+#endif
 
 #ifndef TRUE
 #define TRUE 1
@@ -56,7 +59,10 @@ int main(int argc, char *argv[])
 
    /* Open File */
     fapl = H5Pcreate(H5P_FILE_ACCESS);
-    H5Pset_libver_bounds(fapl, H5F_LIBVER_LATEST, H5F_LIBVER_LATEST);
+    if(H5F_LIBVER_LATEST > 1)
+        H5Pset_libver_bounds(fapl, H5F_LIBVER_V18, H5F_LIBVER_LATEST);
+    else
+        H5Pset_libver_bounds(fapl, H5F_LIBVER_LATEST, H5F_LIBVER_LATEST);
     fid = H5Fopen(FILENAME, H5F_ACC_RDWR, fapl);
 
    /* Open Group g4 */
