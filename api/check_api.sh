@@ -29,17 +29,25 @@
 # Extended May 2019 to also use h5cc scripts from 1.10.x built with the         #
 #                --with-default-api-version=v16 flag                            #    
 #                --with-default-api-version=v18 flag                            #
-#             and h5cc scripts from the develop branch (1.11/1.12) with         #
+#             flags.                                                            #
+#                                                                               # 
+# Extended October 2019 to also use h5cc scripts from 1.12.x.built with the     #
 #                --with-default-api-version=v16                                 #
 #                --with-default-api-version=v18                                 #
 #                --with-default-api-version=v110                                #
+#             and h5cc scripts from the develop branch (1.13/1.14) with         #
+#                --with-default-api-version=v16                                 #
+#                --with-default-api-version=v18                                 #
+#                --with-default-api-version=v110                                #
+#                --with-default-api-version=v112                                #
 #             flags.                                                            #
+#                                                                               # 
 #             Tests also run with the "normal" builds and the                   #
 #                -DH5_USE_16_API                                                #
 #                -DH5_USE_18_API                                                #
 #                -DH5_USE_110_API                                               #
+#                -DH5_USE_112_API                                               #
 #             macros.                                                           #  
-#                                                                               #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 
@@ -75,7 +83,7 @@ CHECK()
     tmp="tmp.out"
 
     # Mask off version extensions and thread ID
-    sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.[0-9].*)/(1.8.x)/' -e 's/(1.10.[0-9].*)/(1.10.x)/' -e 's/(1.11.[0-9].*)/(1.11.x)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
+    sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.[0-9].*)/(1.8.x)/' -e 's/(1.10.[0-9].*)/(1.10.x)/' -e 's/(1.12.[0-9].*)/(1.12.x)/' -e 's/(1.13.[0-9].*)/(1.13.x)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
     ret=$?
     if [ $ret -ne 0 ]; then
         echo "sed failed ?!?!"
@@ -183,7 +191,10 @@ TEST()
     TESTING "normal 1.10.x library build"
     BUILD "$h5cc110 $compile_options" $testname "v110-actual"
 
-    TESTING "normal 1.11.x library build"
+    TESTING "normal 1.12.x library build"
+    BUILD "$h5cc112 $compile_options" $testname "v112-actual"
+
+    TESTING "normal 1.13.x library build"
     BUILD "$h5ccdev $compile_options" $testname "vdev-actual"
 
     TESTING "1.8.x library built in 1.6.x compatibility mode"
@@ -204,22 +215,46 @@ TEST()
     TESTING "normal 1.10.x library build, with 1.8.x compatibility macro"
     BUILD "$h5cc110 -DH5_USE_18_API $compile_options" $testname "v110-18macro"
 
-    TESTING "1.11.x library built in 1.6.x compatibility mode"
+    TESTING "1.12.x library built in 1.6.x compatibility mode"
+    BUILD "$h5cc112compat16 $compile_options" $testname "v112-16compat"
+
+    TESTING "normal 1.12.x library build, with 1.6.x compatibility macro"
+    BUILD "$h5cc112 -DH5_USE_16_API $compile_options" $testname "v112-16macro"
+
+    TESTING "1.12.x library built in 1.8.x compatibility mode"
+    BUILD "$h5cc112compat18 $compile_options" $testname "v112-18compat"
+
+    TESTING "normal 1.12.x library build, with 1.8.x compatibility macro"
+    BUILD "$h5cc112 -DH5_USE_18_API $compile_options" $testname "v112-18macro"
+
+    TESTING "1.12.x library built in 1.10.x compatibility mode"
+    BUILD "$h5cc112compat110 $compile_options" $testname "v112-110compat"
+
+    TESTING "normal 1.12.x library build, with 1.10.x compatibility macro"
+    BUILD "$h5cc112 -DH5_USE_110_API $compile_options" $testname "v112-110macro"
+
+    TESTING "1.13.x library built in 1.6.x compatibility mode"
     BUILD "$h5ccdevcompat16 $compile_options" $testname "vdev-16compat"
 
-    TESTING "normal 1.11.x library build, with 1.6.x compatibility macro"
+    TESTING "normal 1.13.x library build, with 1.6.x compatibility macro"
     BUILD "$h5ccdev -DH5_USE_16_API $compile_options" $testname "vdev-16macro"
 
-    TESTING "1.11.x library built in 1.8.x compatibility mode"
+    TESTING "1.13.x library built in 1.8.x compatibility mode"
     BUILD "$h5ccdevcompat18 $compile_options" $testname "vdev-18compat"
 
-    TESTING "normal 1.11.x library build, with 1.8.x compatibility macro"
+    TESTING "normal 1.13.x library build, with 1.8.x compatibility macro"
     BUILD "$h5ccdev -DH5_USE_18_API $compile_options" $testname "vdev-18macro"
 
-    TESTING "1.11.x library built in 1.10.x compatibility mode"
+    TESTING "1.13.x library built in 1.10.x compatibility mode"
     BUILD "$h5ccdevcompat110 $compile_options" $testname "vdev-110compat"
 
-    TESTING "normal 1.11.x library build, with 1.10.x compatibility macro"
+    TESTING "normal 1.13.x library build, with 1.10.x compatibility macro"
+    BUILD "$h5ccdev -DH5_USE_110_API $compile_options" $testname "vdev-110macro"
+
+    TESTING "1.13.x library built in 1.12.x compatibility mode"
+    BUILD "$h5ccdevcompat110 $compile_options" $testname "vdev-110compat"
+
+    TESTING "normal 1.13.x library build, with 1.12.x compatibility macro"
     BUILD "$h5ccdev -DH5_USE_110_API $compile_options" $testname "vdev-110macro"
 }
 
@@ -262,6 +297,20 @@ TESTAPI112()
     compat_options=$4
 
     TESTING "normal 1.12.x, with: $compat_options"
+    BUILD "$h5ccdev $compat_options $compile_options" $testname "vdev-$suffix"
+}
+
+# Build test program with different API routine versions overridden
+#
+TESTAPI114()
+{
+    # Create aliases for the parameters
+    testname=$1
+    compile_options=$2
+    suffix=$3
+    compat_options=$4
+
+    TESTING "normal 1.14.x, with: $compat_options"
     BUILD "$h5ccdev $compat_options $compile_options" $testname "vdev-$suffix"
 }
 
@@ -519,6 +568,11 @@ h5ccdev="/mnt/scr1/pre-release/hdf5/vdev/$HOST_NAME/bin/h5cc"
 h5ccdevcompat16="/mnt/scr1/pre-release/hdf5/vdev/compat16/$HOST_NAME/bin/h5cc"
 h5ccdevcompat18="/mnt/scr1/pre-release/hdf5/vdev/compat18/$HOST_NAME/bin/h5cc"
 h5ccdevcompat110="/mnt/scr1/pre-release/hdf5/vdev/compat110/$HOST_NAME/bin/h5cc"
+h5ccdevcompat112="/mnt/scr1/pre-release/hdf5/vdev/compat112/$HOST_NAME/bin/h5cc"
+h5cc112="/mnt/scr1/pre-release/hdf5/v112/$HOST_NAME/bin/h5cc"
+h5cc112compat16="/mnt/scr1/pre-release/hdf5/v112/compat16/$HOST_NAME/bin/h5cc"
+h5cc112compat18="/mnt/scr1/pre-release/hdf5/v112/compat18/$HOST_NAME/bin/h5cc"
+h5cc112compat110="/mnt/scr1/pre-release/hdf5/v112/compat110/$HOST_NAME/bin/h5cc"
 h5cc110="/mnt/scr1/pre-release/hdf5/v110/$HOST_NAME/bin/h5cc"
 h5cc110compat16="/mnt/scr1/pre-release/hdf5/v110/compat16/$HOST_NAME/bin/h5cc"
 h5cc110compat18="/mnt/scr1/pre-release/hdf5/v110/compat18/$HOST_NAME/bin/h5cc"
