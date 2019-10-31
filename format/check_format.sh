@@ -24,6 +24,8 @@
 #           - gen_compat.c is run using the v1.6 library to create compat.h5	#
 #	    - a test is run using the v1.8 library to modify compat.h5		#
 #	    - read_compat.c is run using the v1.6 library to read compat.h5	#
+# Extended May 2019 to also run using v1.10 and vdev (develop branch) libraries #
+# in addition to the v1.8 library, and October 2019 for v1.12.                  # 
 #                                                                       	#
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -49,6 +51,9 @@ if [ "${HOST_TEST1}" = "$HOST_NAME" ] || [ "${HOST_TEST2}" = "$HOST_NAME" ];then
 fi
 
 # Define libraries to use
+h5ccdev="/mnt/scr1/pre-release/hdf5/vdev/$HOST_NAME/bin/h5cc"
+h5cc112="/mnt/scr1/pre-release/hdf5/v112/$HOST_NAME/bin/h5cc"
+h5cc110="/mnt/scr1/pre-release/hdf5/v110/$HOST_NAME/bin/h5cc"
 h5cc18="/mnt/scr1/pre-release/hdf5/v18/$HOST_NAME/bin/h5cc"
 h5cc16="/mnt/scr1/pre-release/hdf5/v16/$HOST_NAME/bin/h5cc"
 
@@ -76,7 +81,18 @@ if [ ! -x $h5cc18 ]; then
     echo "h5cc18($h5cc18) not found or not executable.  Abort"
     exit 1
 fi
-
+if [ ! -x $h5cc110 ]; then
+    echo "h5cc110($h5cc110) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc112 ]; then
+    echo "h5cc112($h5cc112) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5ccdev ]; then
+    echo "h5ccdev($h5ccdev) not found or not executable.  Abort"
+    exit 1
+fi
 # When an error occurs, this file is filled with the error information 
 ErrorFile="CompatibilityError.log"
 
@@ -108,6 +124,54 @@ read18()
         ./a.out 2>/dev/null
     else
         echo "messed up compiling read_compat.c with v1.8"
+    fi
+}
+
+#### Read with v1.10 ####
+read110()
+{
+    $h5cc110 -DH5_USE_16_API read_compat.c
+    if [ $? -eq 0 ]
+    then
+        echo >> errors.log
+        echo >> errors.log
+        echo "========= Reading with v1.10 =========" >> errors.log
+        echo >> errors.log
+        ./a.out 2>/dev/null
+    else
+        echo "messed up compiling read_compat.c with v1.10"
+    fi
+}
+
+#### Read with v1.12 ####
+read112()
+{
+    $h5cc112 -DH5_USE_16_API read_compat.c
+    if [ $? -eq 0 ]
+    then
+        echo >> errors.log
+        echo >> errors.log
+        echo "========= Reading with v1.12 =========" >> errors.log
+        echo >> errors.log
+        ./a.out 2>/dev/null
+    else
+        echo "messed up compiling read_compat.c with v1.12"
+    fi
+}
+
+#### Read with vdev ####
+readdev()
+{
+    $h5ccdev -DH5_USE_16_API read_compat.c
+    if [ $? -eq 0 ]
+    then
+        echo >> errors.log
+        echo >> errors.log
+        echo "========= Reading with vdev =========" >> errors.log
+        echo >> errors.log
+        ./a.out 2>/dev/null
+    else
+        echo "messed up compiling read_compat.c with vdev"
     fi
 }
 
@@ -196,15 +260,19 @@ RunTest()
     echo
     echo "#################  $1  #################"
     ./gen_compat.out
-    $h5cc18 tests/$Test
+    $CC tests/$Test
+    #$h5cc18 tests/$Test
     if [ $? -ne 0 ]
     then
-        echo "messed up compiling test/$Test"
+        echo "messed up compiling test/$Test with $CC"
         exit 1
     fi
     ./a.out
     read16
     read18
+    read110
+    read112
+    readdev
     CheckErrors $1
     rm errors.log
 }
@@ -221,8 +289,12 @@ then
     fi
 fi 
 
+CompVERSIONS="$h5cc18 $h5cc110 $h5cc112 $h5ccdev"
+for CC in $CompVERSIONS; do
+
 # Compile gen_compat.c with v1.6
 $h5cc16 -o gen_compat.out gen_compat.c
+echo "Compiling tests with $CC"
 
 # Run tests
 if [ $? -eq 0 ]
@@ -251,6 +323,8 @@ rm gen_compat.out
 rm *.o
 rm compat.h5
 echo
+
+done
 
 exit $EXIT_VALUE
 
