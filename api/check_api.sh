@@ -252,10 +252,10 @@ TEST()
     BUILD "$h5ccdev -DH5_USE_110_API $compile_options" $testname "vdev-110macro"
 
     TESTING "1.13.x library built in 1.12.x compatibility mode"
-    BUILD "$h5ccdevcompat110 $compile_options" $testname "vdev-110compat"
+    BUILD "$h5ccdevcompat112 $compile_options" $testname "vdev-112compat"
 
     TESTING "normal 1.13.x library build, with 1.12.x compatibility macro"
-    BUILD "$h5ccdev -DH5_USE_110_API $compile_options" $testname "vdev-110macro"
+    BUILD "$h5ccdev -DH5_USE_112_API $compile_options" $testname "vdev-112macro"
 }
 
 # Build test program with different API routine versions overridden
@@ -297,7 +297,7 @@ TESTAPI112()
     compat_options=$4
 
     TESTING "normal 1.12.x, with: $compat_options"
-    BUILD "$h5ccdev $compat_options $compile_options" $testname "vdev-$suffix"
+    BUILD "$h5cc112 $compat_options $compile_options" $testname "v112-$suffix"
 }
 
 # Build test program with different API routine versions overridden
@@ -610,6 +610,10 @@ if [ ! -x $h5ccdev ]; then
     echo "h5ccdev($h5ccdev) not found or not executable.  Abort"
     exit 1
 fi
+if [ ! -x $h5ccdevcompat112 ]; then
+    echo "h5ccdevcompat112($h5ccdevcompat112) not found or not executable.  Abort"
+    exit 1
+fi
 if [ ! -x $h5ccdevcompat110 ]; then
     echo "h5ccdevcompat110($h5ccdevcompat110) not found or not executable.  Abort"
     exit 1
@@ -620,6 +624,23 @@ if [ ! -x $h5ccdevcompat18 ]; then
 fi
 if [ ! -x $h5ccdevcompat16 ]; then
     echo "h5ccdevcompat16($h5ccdevcompat16) not found or not executable.  Abort"
+    exit 1
+fi
+
+if [ ! -x $h5cc112 ]; then
+    echo "h5cc112($h5cc112) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5ccdevcompat112 ]; then
+    echo "h5ccdevcompat112($h5ccdevcompat112) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc112compat18 ]; then
+    echo "h5cc112compat18($h5cc11218compat) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc112compat16 ]; then
+    echo "h5cc112compat16($h5cc112compat16) not found or not executable.  Abort"
     exit 1
 fi
 
@@ -653,9 +674,14 @@ fi
 echo
 echo "Testing scripts used:"
 echo "h5ccdev = $h5ccdev"
+echo "h5ccdevcompat112 = $h5ccdevcompat112"
 echo "h5ccdevcompat110 = $h5ccdevcompat110"
 echo "h5ccdevcompat18 = $h5ccdevcompat18"
 echo "h5ccdevcompat16 = $h5ccdevcompat16"
+echo "h5cc112 = $h5cc112"
+echo "h5cc112compat110 = $h5cc112compat110"
+echo "h5cc112compat18 = $h5cc112compat18"
+echo "h5cc112compat16 = $h5cc112compat16"
 echo "h5cc110 = $h5cc110"
 echo "h5cc110compat18 = $h5cc110compat18"
 echo "h5cc110compat16 = $h5cc110compat16"

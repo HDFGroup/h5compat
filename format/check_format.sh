@@ -25,7 +25,7 @@
 #	    - a test is run using the v1.8 library to modify compat.h5		#
 #	    - read_compat.c is run using the v1.6 library to read compat.h5	#
 # Extended May 2019 to also run using v1.10 and vdev (develop branch) libraries #
-# in addition to the v1.8 library                                               # 
+# in addition to the v1.8 library, and October 2019 for v1.12.                  # 
 #                                                                       	#
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -289,7 +289,7 @@ then
     fi
 fi 
 
-CompVERSIONS="$h5cc18 $h5cc110 $h5ccdev"
+CompVERSIONS="$h5cc18 $h5cc110 $h5cc112 $h5ccdev"
 for CC in $CompVERSIONS; do
 
 # Compile gen_compat.c with v1.6
