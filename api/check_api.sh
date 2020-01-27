@@ -426,16 +426,16 @@ TEST_H5O()
     TEST test_h5o $compile_options
 
     # Run tests for overriding version of individual API routines
-    TESTAPI112 test_h5o "$compile_options" H5Oget_info1 "-DH5Oget_info_vers=1"
-    TESTAPI112 test_h5o "$compile_options" H5Oget_info2 "-DH5_USE_110_API -DH5Oget_info_vers=2"
-    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_name1 "-DH5Oget_info_by_name_vers=1"
-    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_name2 "-DH5_USE_110_API -DH5Oget_info_by_name_vers=2"
-    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_idx1 "-DH5Oget_info_by_idx_vers=1"
-    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_idx2 "-DH5_USE_110_API -DH5Oget_info_by_idx_vers=2"
-    TESTAPI112 test_h5o "$compile_options" H5Ovisit1 "-DH5Ovisit_vers=1"
-    TESTAPI112 test_h5o "$compile_options" H5Ovisit2 "-DH5_USE_110_API -DH5Ovisit_vers=2"
-    TESTAPI112 test_h5o "$compile_options" H5Ovisit_by_name1 "-DH5Ovisit_by_name_vers=1"
-    TESTAPI112 test_h5o "$compile_options" H5Ovisit_by_name2 "-DH5_USE_110_API -DH5Ovisit_by_name_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info1 "-DH5Oget_info_vers=1 -DH5O_info_t_vers=1 -DH5O_iterate_t_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info3 "-DH5_USE_110_API -DH5Oget_info_vers=3 -DH5O_iterate_t_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_name1 "-DH5Oget_info_by_name_vers=1 -DH5O_info_t_vers=1 -DH5O_iterate_t_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_name3 "-DH5_USE_110_API -DH5Oget_info_by_name_vers=3 -DH5O_iterate_t_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_idx1 "-DH5Oget_info_by_idx_vers=1 -DH5O_info_t_vers=1 -DH5O_iterate_t_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Oget_info_by_idx3 "-DH5_USE_110_API -DH5Oget_info_by_idx_vers=3 -DH5O_iterate_t_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit1 "-DH5Ovisit_vers=1 -DH5O_info_t_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit3 "-DH5_USE_110_API -DH5Ovisit_vers=3 -DH5O_iterate_t_vers=2"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit_by_name1 "-DH5Ovisit_by_name_vers=1 -DH5O_info_t_vers=1"
+    TESTAPI112 test_h5o "$compile_options" H5Ovisit_by_name3 "-DH5_USE_110_API -DH5Ovisit_by_name_vers=3 -DH5O_iterate_t_vers=2"
 }
 
 # Runs tests for H5P API
@@ -692,7 +692,7 @@ echo "h5cc16 = $h5cc16"
 
 ##################  MAIN  ##################
 
-if (TEST_H5A &&\
+if ( TEST_H5A &&\
     TEST_H5D &&\
     TEST_H5E &&\
     TEST_H5F &&\

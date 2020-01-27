@@ -1,5 +1,5 @@
-H5Oget_info_vers = 2
-H5Oget_info_by_name_vers = 2
+H5Oget_info_vers = 3
+H5Oget_info_by_name_vers = 3
 H5Oget_info_by_idx_vers = 1
-H5Ovisit_vers = 2
-H5Ovisit_by_name_vers = 2
+H5Ovisit_vers = 3
+H5Ovisit_by_name_vers = 3

@@ -66,6 +66,24 @@ visit_obj_cb(hid_t group_id, const char *name,
 
     return(H5_ITER_CONT);
 } /* end visit_obj_cb() */
+
+#if H5_VERS_MINOR > 10
+static int
+visit_obj_cb2(hid_t group_id, const char *name, 
+             const H5O_info2_t *oinfo, void *_op_data)
+{
+    ovisit_ud_t *op_data = (ovisit_ud_t *)_op_data;
+
+    /* Check for correct object information */
+    if(strcmp(op_data->info[op_data->idx].path, name)) return(H5_ITER_ERROR);
+    if(op_data->info[op_data->idx].type != oinfo->type) return(H5_ITER_ERROR);
+
+    /* Advance to next location in expected output */
+    op_data->idx++;
+
+    return(H5_ITER_CONT);
+} /* end visit_obj_cb() */
+#endif /* H5_VERS_MINOR > 10 */
 #endif /* H5_VERS_MINOR > 8 */
 
 
@@ -88,6 +106,9 @@ main(int argc, const char *argv[])
 
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR > 10
+    H5O_info1_t  infobuf1;
+    H5O_info2_t  infobuf2;
+    H5O_iterate2_t iter;
     printf("H5Oget_info_vers = %d\n", H5Oget_info_vers);
     printf("H5Oget_info_by_name_vers = %d\n", H5Oget_info_by_name_vers);
     printf("H5Oget_info_by_idx_vers = %d\n", H5Oget_info_by_idx_vers);
@@ -111,8 +132,14 @@ main(int argc, const char *argv[])
     /* Create dataspace for dataset */
     if((sid = H5Screate(H5S_SCALAR)) < 0) goto error;
 
+#if defined(H5Dcreate_vers) && H5Dcreate_vers > 1
+    /* Create a dataset */
+    if((dsid = H5Dcreate(fid, DSET_NAME, H5T_NATIVE_UCHAR, sid, H5P_DEFAULT,
+                         H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;    
+#else
     /* Create a dataset */
     if((dsid = H5Dcreate(fid, DSET_NAME, H5T_NATIVE_UCHAR, sid, H5P_DEFAULT)) < 0) goto error;    
+#endif
     
     /* Close dataspace */
     if(H5Sclose(sid) < 0) goto error;
@@ -121,13 +148,13 @@ main(int argc, const char *argv[])
     if(H5Dclose(dsid) < 0) goto error;
 
 #if defined(H5Oget_info_vers) && H5Oget_info_vers > 1
-    if((H5Oget_info (fid, &infobuf, H5O_INFO_ALL)) < 0) goto error;
+    if((H5Oget_info (fid, &infobuf2, H5O_INFO_ALL)) < 0) goto error;
 #else /* H5Oget_info_vers */
     if((H5Oget_info (fid, &infobuf)) < 0) goto error;
 #endif /* H5Oget_info_vers */
 
 #if defined(H5Oget_info_by_name_vers) && H5Oget_info_by_name_vers > 1
-    if((H5Oget_info_by_name (fid, DSET_NAME, &infobuf, H5O_INFO_ALL, H5P_DEFAULT)) < 0) 
+    if((H5Oget_info_by_name (fid, DSET_NAME, &infobuf2, H5O_INFO_ALL, H5P_DEFAULT)) < 0) 
         goto error;
 #else /* H5Oget_info_by_name_vers */
     if((H5Oget_info_by_name (fid, DSET_NAME, &infobuf, H5P_DEFAULT)) < 0) goto error;
@@ -135,7 +162,7 @@ main(int argc, const char *argv[])
 
 #if defined(H5Oget_info_by_idx_vers) && H5Oget_info_by_idx_vers > 1
     if((H5Oget_info_by_idx (fid, ".", H5_INDEX_NAME, H5_ITER_INC, (hsize_t)1,
-                            &infobuf, H5O_INFO_ALL, H5P_DEFAULT)) < 0) goto error;
+                            &infobuf2, H5O_INFO_ALL, H5P_DEFAULT)) < 0) goto error;
 #else /* H5Oget_info_by_idx_vers */
     if((H5Oget_info_by_idx (fid, ".", H5_INDEX_NAME, H5_ITER_INC, (hsize_t)1, 
                             &infobuf, H5P_DEFAULT)) < 0) goto error;
@@ -144,7 +171,7 @@ main(int argc, const char *argv[])
 #if defined(H5Ovisit_vers) && H5Ovisit_vers > 1
     udata.idx = 0;
     udata.info = ovisit0;
-    if((H5Ovisit (fid, H5_INDEX_NAME, H5_ITER_INC, visit_obj_cb, 
+    if((H5Ovisit (fid, H5_INDEX_NAME, H5_ITER_INC, visit_obj_cb2, 
                   &udata, H5O_INFO_BASIC)) < 0) goto error;
 #else /* H5Ovisit_vers */
     udata.idx = 0;
@@ -156,7 +183,7 @@ main(int argc, const char *argv[])
 #if defined(H5Ovisit_by_name_vers) && H5Ovisit_by_name_vers > 1
     udata.idx = 0;
     udata.info = ovisit0;
-    if((H5Ovisit_by_name (fid, ".", H5_INDEX_NAME, H5_ITER_INC, visit_obj_cb, 
+    if((H5Ovisit_by_name (fid, ".", H5_INDEX_NAME, H5_ITER_INC, visit_obj_cb2, 
                           &udata, H5O_INFO_BASIC, H5P_DEFAULT)) < 0) goto error;
 #else /* H5Ovisit_by_name_vers */
     udata.idx = 0;
