@@ -14,18 +14,20 @@
 
 /*
  *  This can be compiled on all library release versions with:
- *      h5cc tests/t_ref_obj.c
+ *      h5cc tests/t_ref_object.c
  *
- *  This will add a referenced dataset to the existing test file FILENAME.
+ *  This will add a referenced dataset to the existing test file FILENAME:
  *  --for library release 1.12 and above, it will create with the revised reference type
- *  --for library releaes 1.10 and below, it will create with the old reference type
+ *      "Add_revised_ref_object"
+ *  --for library release 1.10 and below, it will create with the old reference type
+ *      "Add_old_ref_object"
  */
 
 #include "hdf5.h"
 #include <stdlib.h>
 
 /* The test file */
-#define FILENAME "ref_obj_compat.h5"    
+#define FILENAME "ref_compat.h5"    
 
 /* Determine the maximum value */
 #define MAX(a,b) (((a)>(b)) ? (a) : (b))
@@ -36,7 +38,7 @@ int main(int argc, char *argv[])
     hid_t gid = -1;     /* Group ID */
     hid_t did = -1;     /* Dataset ID */
     hid_t sid = -1;	    /* Dataspace ID */
-    hsize_t dims1[] = {10}; /* Dimension size */
+    hsize_t dims1[] = {2}; /* Dimension size */
     int i;              /* Local index variable */
     int ret;            /* Return status */
     unsigned major, minor, release;     /* Library release versions */
@@ -58,10 +60,10 @@ int main(int argc, char *argv[])
 
 #if defined H5_USE_114_API_DEFAULT || defined H5_USE_112_API_DEFAULT
 
-    wbuf = calloc(sizeof(H5R_ref_t), 10);
+    wbuf = calloc(sizeof(H5R_ref_t), 2);
 
     /* Create a dataset with revised reference type */
-    did = H5Dcreate2(fid, "Add_revised_ref_dset", H5T_STD_REF, sid, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+    did = H5Dcreate2(fid, "Add_revised_ref_object", H5T_STD_REF, sid, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
 
     /* Create reference to /Group/Dataset */
     ret = H5Rcreate_object(fid, "/Group/Dataset", H5P_DEFAULT, &wbuf[0]);
@@ -72,12 +74,16 @@ int main(int argc, char *argv[])
     /* Write to the referenced dataset */
     ret = H5Dwrite(did, H5T_STD_REF, H5S_ALL, H5S_ALL, H5P_DEFAULT, wbuf);
 
+    /* Destroy references */
+   ret = H5Rdestroy(&wbuf[0]);
+   ret = H5Rdestroy(&wbuf[1]);
+
 #else
 
-    wbuf = malloc(MAX(sizeof(unsigned), sizeof(hobj_ref_t)) * 10);
+    wbuf = calloc(MAX(sizeof(unsigned), sizeof(hobj_ref_t)), 2);
 
     /* Create a dataset with old reference type */
-    did = H5Dcreate1(fid, "Add_old_ref_dset", H5T_STD_REF_OBJ, sid, H5P_DEFAULT);
+    did = H5Dcreate1(fid, "Add_old_ref_object", H5T_STD_REF_OBJ, sid, H5P_DEFAULT);
 
     /* Create reference to /Group/Dataset */
     ret = H5Rcreate(&wbuf[0], fid, "/Group/Dataset", H5R_OBJECT, -1);
@@ -94,6 +100,9 @@ int main(int argc, char *argv[])
     H5Dclose(did);
     H5Sclose(sid);
     H5Fclose(fid);
+
+    /* Free the buffer */
+    if(wbuf) free(wbuf);
 
     return 0;
 }
