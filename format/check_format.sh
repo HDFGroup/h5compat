@@ -175,24 +175,24 @@ readdev()
     fi
 }
 ####  Read with v1.6 ####
-read_ref_obj_16()
+read_ref_compat_16()
 {
-    $h5cc16 read_ref_obj_compat.c
+    $h5cc16 read_ref_compat.c
     if [ $? -eq 0 ]
     then
         echo "========= Reading with v1.6 =========" > errors.log
         echo >> errors.log
         ./a.out 2>/dev/null
     else
-        echo "messed up compiling read_ref_obj_compat.c with v1.6"
+        echo "messed up compiling read_ref_compat.c with v1.6"
     fi
 }
 
 
 #### Read with v1.8 ####
-read_ref_obj_18()
+read_ref_compat_18()
 {
-    $h5cc18 -DH5_USE_16_API read_ref_obj_compat.c
+    $h5cc18 -DH5_USE_16_API read_ref_compat.c
     if [ $? -eq 0 ]
     then
         echo >> errors.log
@@ -201,14 +201,14 @@ read_ref_obj_18()
         echo >> errors.log
         ./a.out 2>/dev/null
     else
-        echo "messed up compiling read_ref_obj_compat.c with v1.8"
+        echo "messed up compiling read_ref_compat.c with v1.8"
     fi
 }
 
 #### Read with v1.10 ####
-read_ref_obj_110()
+read_ref_compat_110()
 {
-    $h5cc110 -DH5_USE_16_API read_ref_obj_compat.c
+    $h5cc110 -DH5_USE_16_API read_ref_compat.c
     if [ $? -eq 0 ]
     then
         echo >> errors.log
@@ -217,14 +217,14 @@ read_ref_obj_110()
         echo >> errors.log
         ./a.out 2>/dev/null
     else
-        echo "messed up compiling read_ref_obj_compat.c with v1.10"
+        echo "messed up compiling read_ref_compat.c with v1.10"
     fi
 }
 
 #### Read with v1.12 ####
-read_ref_obj_112()
+read_ref_compat_112()
 {
-    $h5cc112 -DH5_USE_16_API read_ref_obj_compat.c
+    $h5cc112 -DH5_USE_16_API read_ref_compat.c
     if [ $? -eq 0 ]
     then
         echo >> errors.log
@@ -233,14 +233,14 @@ read_ref_obj_112()
         echo >> errors.log
         ./a.out 2>/dev/null
     else
-        echo "messed up compiling read_ref_obj_compat.c with v1.12"
+        echo "messed up compiling read_ref_compat.c with v1.12"
     fi
 }
 
 #### Read with vdev ####
-read_ref_obj_dev()
+read_ref_compat_dev()
 {
-    $h5ccdev -DH5_USE_16_API read_ref_obj_compat.c
+    $h5ccdev -DH5_USE_16_API read_ref_compat.c
     if [ $? -eq 0 ]
     then
         echo >> errors.log
@@ -249,7 +249,7 @@ read_ref_obj_dev()
         echo >> errors.log
         ./a.out 2>/dev/null
     else
-        echo "messed up compiling read_ref_obj_compat.c with vdev"
+        echo "messed up compiling read_ref_compat.c with vdev"
     fi
 }
 
@@ -356,18 +356,18 @@ RunTest()
 }
 
 
-#### Run ref_obj test ####
+#### Run ref_compat test ####
 # Testing 2 different types of references results in different expected output
 # depending on the HDF5 version used to create the h5cc script.  Therefore the 
 # output is different for a test file created by $h5cc110 or older than for a 
 # test file created by $h5cc112 or newer.
-Run_ref_obj_Test()
+Run_ref_compat_Test()
 {
     Test=$1".c"
 
     echo
     echo "#################  $1  #################"
-    ./gen_ref_obj_compat.out
+    ./gen_ref_compat.out
     $CC tests/$Test
     if [ $? -ne 0 ]
     then
@@ -375,11 +375,11 @@ Run_ref_obj_Test()
         exit 1
     fi
     ./a.out
-    read_ref_obj_16
-    read_ref_obj_18
-    read_ref_obj_110
-    read_ref_obj_112
-    read_ref_obj_dev
+    read_ref_compat_16
+    read_ref_compat_18
+    read_ref_compat_110
+    read_ref_compat_112
+    read_ref_compat_dev
     if [ "$CC" = "$h5cc18" -o "$CC" = "$h5cc110" ]; then
         CheckErrors $11
     else
@@ -405,7 +405,7 @@ for CC in $CompVERSIONS; do
 
 # Compile gen_compat.c with v1.6
 $h5cc16 -o gen_compat.out gen_compat.c
-$h5cc16 -o gen_ref_obj_compat.out gen_ref_obj_compat.c
+$h5cc16 -o gen_ref_compat.out gen_ref_compat.c
 echo "Compiling tests with $CC"
 
 # Run tests
@@ -422,7 +422,8 @@ then
         RunTest t_latest_mod_attr &&\
         RunTest t_latest_more_groups &&\
         RunTest t_index_link &&\
-        Run_ref_obj_Test t_ref_obj); then
+        Run_ref_compat_Test t_ref_object &&\
+        Run_ref_compat_Test t_ref_region); then
         EXIT_VALUE=0
     else
         EXIT_VALUE=2
@@ -434,10 +435,10 @@ fi
 # Cleanup
 rm a.out
 rm gen_compat.out
-rm gen_ref_obj_compat.out
+rm gen_ref_compat.out
 rm *.o
 rm compat.h5
-rm ref_obj_compat.h5
+rm ref_compat.h5
 echo
 
 done
