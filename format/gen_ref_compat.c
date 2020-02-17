@@ -30,6 +30,10 @@
 /* Determine the maximum value */
 #define MAX(a,b) (((a)>(b)) ? (a) : (b))
 
+/* Datasets added */
+#define OLD_OBJ_NAME   "Old_ref_object"
+#define OLD_REG_NAME   "Old_ref_region"
+
 int main(void)
 {
     hsize_t ref_dims[] = {2};
@@ -83,7 +87,7 @@ int main(void)
     ref_sid = H5Screate_simple(1, ref_dims, NULL);
 
     /* Create a dataset with the old object reference type */
-    did2 = H5Dcreate(fid, "Old_ref_object", H5T_STD_REF_OBJ, ref_sid, H5P_DEFAULT);
+    did2 = H5Dcreate(fid, OLD_OBJ_NAME, H5T_STD_REF_OBJ, ref_sid, H5P_DEFAULT);
 
     /* Create reference to /Group/Dataset */
     ret = H5Rcreate(&obj_wbuf[0], fid, "/Group/Dataset", H5R_OBJECT, -1);
@@ -100,7 +104,7 @@ int main(void)
 
 
     /* Create a dataset with the old dataset region reference type */
-    did3 = H5Dcreate(fid, "Old_ref_region", H5T_STD_REF_DSETREG, ref_sid, H5P_DEFAULT);
+    did3 = H5Dcreate(fid, OLD_REG_NAME, H5T_STD_REF_DSETREG, ref_sid, H5P_DEFAULT);
 
     /* Create references */
 
