@@ -33,12 +33,11 @@
 #define OLD_OBJ_NAME   "Old_ref_object"
 #define OLD_REG_NAME   "Old_ref_region"
 
-/* Datasets added by tests/t_ref_obj.c */
+/* Datasets added by tests/t_ref.c */
 #define ADD_OLD_OBJ_NAME        "Add_old_ref_object"
 #define ADD_REVISED_OBJ_NAME    "Add_revised_ref_object"
 
 /* Datasets added by tests/t_ref_region.c */
-#define ADD_OLD_OBJ_NAME        "Add_old_ref_object"
 #define ADD_OLD_REG_NAME        "Add_old_ref_region"
 #define ADD_REVISED_REG_NAME    "Add_revised_ref_region"
 
