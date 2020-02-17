@@ -375,14 +375,6 @@ Run_ref_compat_Test()
         exit 1
     fi
     ./a.out
-    rm ./a.out
-    $CC tests/t_ref_region.c
-    if [ $? -ne 0 ]
-    then
-        echo "messed up compiling test/$Test with $CC"
-        exit 1
-    fi
-    ./a.out
     read_ref_compat_16
     read_ref_compat_18
     read_ref_compat_110
@@ -430,7 +422,7 @@ then
         RunTest t_latest_mod_attr &&\
         RunTest t_latest_more_groups &&\
         RunTest t_index_link &&\
-        Run_ref_compat_Test t_ref_object); then
+        Run_ref_compat_Test t_ref); then
         EXIT_VALUE=0
     else
         EXIT_VALUE=2

@@ -3,7 +3,7 @@
 Passed: Opening dataset Old_ref_object (null)
 Passed: Opening dataset Old_ref_region (null)
 Passed: Opening dataset Add_old_ref_object (null)
-Passed: Opening dataset Add_revised_ref_region Correct to fail in opening
+Passed: Opening dataset Add_old_ref_region (null)
 
 
 ========= Reading with v1.8 =========
@@ -11,7 +11,7 @@ Passed: Opening dataset Add_revised_ref_region Correct to fail in opening
 Passed: Opening dataset Old_ref_object (null)
 Passed: Opening dataset Old_ref_region (null)
 Passed: Opening dataset Add_old_ref_object (null)
-Passed: Opening dataset Add_revised_ref_region Correct to fail in opening
+Passed: Opening dataset Add_old_ref_region (null)
 
 
 ========= Reading with v1.10 =========
@@ -19,7 +19,7 @@ Passed: Opening dataset Add_revised_ref_region Correct to fail in opening
 Passed: Opening dataset Old_ref_object (null)
 Passed: Opening dataset Old_ref_region (null)
 Passed: Opening dataset Add_old_ref_object (null)
-Passed: Opening dataset Add_revised_ref_region Correct to fail in opening
+Passed: Opening dataset Add_old_ref_region (null)
 
 
 ========= Reading with v1.12 =========
@@ -27,7 +27,7 @@ Passed: Opening dataset Add_revised_ref_region Correct to fail in opening
 Passed: Opening dataset Old_ref_object (null)
 Passed: Opening dataset Old_ref_region (null)
 Passed: Opening dataset Add_old_ref_object (null)
-Error: Opening datasets Invalid state (null)
+Passed: Opening dataset Add_old_ref_region (null)
 
 
 ========= Reading with vdev =========
@@ -35,4 +35,4 @@ Error: Opening datasets Invalid state (null)
 Passed: Opening dataset Old_ref_object (null)
 Passed: Opening dataset Old_ref_region (null)
 Passed: Opening dataset Add_old_ref_object (null)
-Error: Opening datasets Invalid state (null)
+Passed: Opening dataset Add_old_ref_region (null)
