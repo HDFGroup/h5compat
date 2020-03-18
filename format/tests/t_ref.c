@@ -38,10 +38,6 @@
 /* The test file */
 #define FILENAME "ref_compat.h5"    
 
-/* Determine the maximum value */
-#define MAX(a,b) (((a)>(b)) ? (a) : (b))
-
-
 /* Datasets added */
 #define ADD_OLD_OBJ_NAME        "Add_old_ref_object"
 #define ADD_REVISED_OBJ_NAME    "Add_revised_ref_object"
@@ -68,9 +64,10 @@ int main(int argc, char *argv[])
 
 
 #if defined H5_USE_114_API_DEFAULT || H5_USE_112_API_DEFAULT
-    H5R_ref_t *wbuf;    /* buffer to write to disk          */
+    H5R_ref_t wbuf[2];    /* buffer to write to disk          */
 #else
-    hobj_ref_t *wbuf;
+    hobj_ref_t wbuf_obj[2];
+    hdset_reg_ref_t  wbuf_reg[2];
 #endif
 
     /* Open the test file */
@@ -98,8 +95,6 @@ int main(int argc, char *argv[])
     coord1[9][0] = 03;
 
 #if defined H5_USE_114_API_DEFAULT || defined H5_USE_112_API_DEFAULT
-
-    wbuf = calloc(sizeof(H5R_ref_t), 2);
 
     /* Create a dataset with object reference (with the revised reference type) */
     did1 = H5Dcreate2(fid,  ADD_REVISED_OBJ_NAME, H5T_STD_REF, sid_1_2, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
@@ -146,19 +141,17 @@ int main(int argc, char *argv[])
 
 #else
 
-    wbuf = calloc(MAX(sizeof(unsigned), sizeof(hobj_ref_t)), 2);
-
     /* Create a dataset with object reference (with the old reference type) */
     did1 = H5Dcreate1(fid, ADD_OLD_OBJ_NAME, H5T_STD_REF_OBJ, sid_1_2, H5P_DEFAULT);
 
     /* Create reference to /Group/Dataset */
-    ret = H5Rcreate(&wbuf[0], fid, "/Group/Dataset", H5R_OBJECT, -1);
+    ret = H5Rcreate(&wbuf_obj[0], fid, "/Group/Dataset", H5R_OBJECT, -1);
 
     /* Create reference to /Group */
-    ret = H5Rcreate(&wbuf[1], fid, "/Group", H5R_OBJECT, -1);
+    ret = H5Rcreate(&wbuf_obj[1], fid, "/Group", H5R_OBJECT, -1);
 
     /* Write to the referenced dataset */
-    ret = H5Dwrite(did1, H5T_STD_REF_OBJ, H5S_ALL, H5S_ALL, H5P_DEFAULT, wbuf);
+    ret = H5Dwrite(did1, H5T_STD_REF_OBJ, H5S_ALL, H5S_ALL, H5P_DEFAULT, wbuf_obj);
 
     /* Create a dataset with dataset region reference (with old reference type) */
     did2 = H5Dcreate1(fid, ADD_OLD_REG_NAME, H5T_STD_REF_DSETREG, sid_1_2, H5P_DEFAULT);
@@ -171,16 +164,16 @@ int main(int argc, char *argv[])
     ret = H5Sselect_hyperslab(sid3, H5S_SELECT_SET, start, stride, count, block);
 
     /* Store first dataset region */
-    ret = H5Rcreate(&wbuf[0], fid, "/Group/Dataset", H5R_DATASET_REGION, sid3);
+    ret = H5Rcreate(&wbuf_reg[0], fid, "/Group/Dataset", H5R_DATASET_REGION, sid3);
 
     /* Select sequence of ten points for second reference */
     ret = H5Sselect_elements(sid3, H5S_SELECT_SET, (size_t)10, (const hsize_t *)coord1);
 
     /* Store second dataset region */
-    ret = H5Rcreate(&wbuf[1], fid, "/Group/Dataset", H5R_DATASET_REGION, sid3);
+    ret = H5Rcreate(&wbuf_reg[1], fid, "/Group/Dataset", H5R_DATASET_REGION, sid3);
 
     /* Write selection to the referenced dataset */
-    ret = H5Dwrite(did2, H5T_STD_REF_DSETREG, H5S_ALL, H5S_ALL, H5P_DEFAULT, wbuf);
+    ret = H5Dwrite(did2, H5T_STD_REF_DSETREG, H5S_ALL, H5S_ALL, H5P_DEFAULT, wbuf_reg);
 
 
 #endif
@@ -192,9 +185,6 @@ int main(int argc, char *argv[])
     H5Sclose(sid_1_2);
     H5Sclose(sid3);
     H5Fclose(fid);
-
-    /* Free the buffer */
-    if(wbuf) free(wbuf);
 
     return 0;
 }
