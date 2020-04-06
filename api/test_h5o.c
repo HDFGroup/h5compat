@@ -13,6 +13,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 #include "hdf5.h"
+#include <string.h>
 
 /*
  * Basic tests of dataset (H5F) API routines, to verify that API compatibility
@@ -67,7 +68,7 @@ visit_obj_cb(hid_t group_id, const char *name,
     return(H5_ITER_CONT);
 } /* end visit_obj_cb() */
 
-#if H5_VERS_MINOR > 10
+#if H5_VERS_MINOR == 12 || (H5_VERS_MINOR > 12 && !defined(H5_USE_18_API))
 static int
 visit_obj_cb2(hid_t group_id, const char *name, 
              const H5O_info2_t *oinfo, void *_op_data)
@@ -83,7 +84,7 @@ visit_obj_cb2(hid_t group_id, const char *name,
 
     return(H5_ITER_CONT);
 } /* end visit_obj_cb() */
-#endif /* H5_VERS_MINOR > 10 */
+#endif /* H5_VERS_MINOR == 12 || (H5_VERS_MINOR > 12 && !defined(H5_USE_18_API)) */
 #endif /* H5_VERS_MINOR > 8 */
 
 
@@ -104,11 +105,13 @@ main(int argc, const char *argv[])
     H5O_info_t  infobuf;
     ovisit_ud_t udata;          /* User-data for visiting */
 
-    /* Dump versions for API symbols tested, if library supports versioning */
-#if H5_VERS_MINOR > 10
+#if H5_VERS_MINOR == 12 || (H5_VERS_MINOR > 12 && !defined(H5_USE_18_API))
     H5O_info1_t  infobuf1;
     H5O_info2_t  infobuf2;
     H5O_iterate2_t iter;
+#endif
+#if H5_VERS_MINOR > 10
+    /* Dump versions for API symbols tested, if library supports versioning */
     printf("H5Oget_info_vers = %d\n", H5Oget_info_vers);
     printf("H5Oget_info_by_name_vers = %d\n", H5Oget_info_by_name_vers);
     printf("H5Oget_info_by_idx_vers = %d\n", H5Oget_info_by_idx_vers);

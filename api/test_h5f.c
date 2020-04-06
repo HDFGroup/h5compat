@@ -30,15 +30,16 @@ main(int argc, const char *argv[])
     argc = argc;
     argv = argv;
 
-    /* v1.6 didn't didn't have H5Fget_info function or H5F_info_t structure */
+    /* v1.6 didn't didn't have H5Fget_info function or H5F_info_t structure. 
+       Skip to end for version 1.6 or when using 1.6 APIs.  */
 #if H5_VERS_MINOR > 6
     /* H5F_info_t was not versioned in v1.8 */
 #if H5_VERS_MINOR == 8
-    H5F_info_t *file_info;
+    H5F_info_t file_info;
 #elif defined(H5Fget_info_vers) && H5Fget_info_vers > 1
-    H5F_info2_t *file_info;
+    H5F_info2_t file_info;
 #else
-    H5F_info1_t *file_info;
+    H5F_info1_t file_info;
 #endif /* H5_VERS_MINOR == 8 / H5Fget_info_vers */
 
     /* Dump versions for API symbols tested, if library supports versioning */
@@ -50,7 +51,7 @@ main(int argc, const char *argv[])
     if((fid = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
 
     /* Get file info */
-    if((H5Fget_info(fid, file_info)) < 0) goto error;
+    if((H5Fget_info(fid, &file_info)) < 0) goto error;
 
     /* Close file */
     if(H5Fclose(fid) < 0) goto error;
