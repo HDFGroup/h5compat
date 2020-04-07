@@ -40,12 +40,12 @@ main(int argc, const char *argv[])
     H5F_info2_t file_info;
 #else
     H5F_info1_t file_info;
-#endif /* H5_VERS_MINOR == 8 / H5Fget_info_vers */
+#endif /* H5_VERS_MINOR == 8 */
 
     /* Dump versions for API symbols tested, if library supports versioning */
 #if H5_VERS_MINOR >= 10
     printf("H5Fget_info_vers = %d\n", H5Fget_info_vers);
-#endif /* H5_VERS_MINOR >= 10 */
+#endif
 
     /* Create file */
     if((fid = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT)) < 0) goto error;
