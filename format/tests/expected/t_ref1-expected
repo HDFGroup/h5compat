@@ -1,0 +1,38 @@
+========= Reading with v1.6 =========
+
+Passed: Opening dataset Old_ref_object (null)
+Passed: Opening dataset Old_ref_region (null)
+Passed: Opening dataset Add_old_ref_object (null)
+Passed: Opening dataset Add_old_ref_region (null)
+
+
+========= Reading with v1.8 =========
+
+Passed: Opening dataset Old_ref_object (null)
+Passed: Opening dataset Old_ref_region (null)
+Passed: Opening dataset Add_old_ref_object (null)
+Passed: Opening dataset Add_old_ref_region (null)
+
+
+========= Reading with v1.10 =========
+
+Passed: Opening dataset Old_ref_object (null)
+Passed: Opening dataset Old_ref_region (null)
+Passed: Opening dataset Add_old_ref_object (null)
+Passed: Opening dataset Add_old_ref_region (null)
+
+
+========= Reading with v1.12 =========
+
+Passed: Opening dataset Old_ref_object (null)
+Passed: Opening dataset Old_ref_region (null)
+Passed: Opening dataset Add_old_ref_object (null)
+Passed: Opening dataset Add_old_ref_region (null)
+
+
+========= Reading with vdev =========
+
+Passed: Opening dataset Old_ref_object (null)
+Passed: Opening dataset Old_ref_region (null)
+Passed: Opening dataset Add_old_ref_object (null)
+Passed: Opening dataset Add_old_ref_region (null)
