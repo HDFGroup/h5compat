@@ -80,15 +80,19 @@ CHECK()
     # Set the same of the actual and expected output files
     expected="expected/$1/$2"
     actual=$1".out"
+    tmp1="tmp1.out"
     tmp="tmp.out"
 
     # Mask off version extensions and thread ID
-    sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.[0-9].*)/(1.8.x)/' -e 's/(1.10.[0-9].*)/(1.10.x)/' -e 's/(1.12.[0-9].*)/(1.12.x)/' -e 's/(1.13.[0-9].*)/(1.13.x)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp
+    sed -e 's/1.6.[0-9].*th/1.6.x th/' -e 's/(1.8.[0-9].*)/(1.8.x)/' -e 's/(1.10.[0-9].*)/(1.10.x)/' -e 's/(1.12.[0-9].*)/(1.12.x)/' -e 's/(1.13.[0-9].*)/(1.13.x)/' -e 's/thread .*:/thread 0:/' <$actual >$tmp1
     ret=$?
     if [ $ret -ne 0 ]; then
         echo "sed failed ?!?!"
         exit 1
     fi
+
+    /* Compare only version output */
+    cat $tmp1 | grep vers > $tmp
 
     # Check if output from test program is the same as expected output
     cmp -s $tmp $expected
