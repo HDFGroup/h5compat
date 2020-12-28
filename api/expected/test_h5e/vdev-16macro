@@ -19,5 +19,5 @@ HDF5-DIAG: Error detected in HDF5 (1.13.x) thread 0:
     major: Object cache
     minor: Feature is unsupported
   #004: file1 line 1 in func1(): str1
-    major: Object atom
+    major: Object ID
     minor: Information is uinitialized

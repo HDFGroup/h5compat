@@ -16,6 +16,13 @@
 #include "hdf5.h"
 
 /*
+ * H5E_ATOM was renamed H5E_ID in 1.13.0.
+ */
+#if H5_VERS_MINOR > 12
+#define H5E_ATOM H5E_ID
+#endif
+
+/*
  * Basic tests of error (H5E) API routines, to verify that API compatibility
  *      is working in the 1.8+ versions of the library
  */
