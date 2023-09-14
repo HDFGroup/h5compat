@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     int ret;                /* Return status */
 
 
-#if defined H5_USE_114_API_DEFAULT || H5_USE_112_API_DEFAULT
+#if defined H5_USE_116_API_DEFAULT || defined H5_USE_114_API_DEFAULT || H5_USE_112_API_DEFAULT
     H5R_ref_t wbuf[2];    /* buffer to write to disk          */
 #else
     hobj_ref_t wbuf_obj[2];
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
     coord1[8][0] = 97;
     coord1[9][0] = 03;
 
-#if defined H5_USE_114_API_DEFAULT || defined H5_USE_112_API_DEFAULT
+#if defined H5_USE_116_API_DEFAULT || defined H5_USE_114_API_DEFAULT || defined H5_USE_112_API_DEFAULT
 
     /* Create a dataset with object reference (with the revised reference type) */
     did1 = H5Dcreate2(fid,  ADD_REVISED_OBJ_NAME, H5T_STD_REF, sid_1_2, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);

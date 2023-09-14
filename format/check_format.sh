@@ -52,6 +52,7 @@ fi
 
 # Define libraries to use
 h5ccdev="/mnt/scr1/pre-release/hdf5/vdev/$HOST_NAME/bin/h5cc"
+h5cc114="/mnt/scr1/pre-release/hdf5/v114/$HOST_NAME/bin/h5cc"
 h5cc112="/mnt/scr1/pre-release/hdf5/v112/$HOST_NAME/bin/h5cc"
 h5cc110="/mnt/scr1/pre-release/hdf5/v110/$HOST_NAME/bin/h5cc"
 h5cc18="/mnt/scr1/pre-release/hdf5/v18/$HOST_NAME/bin/h5cc"
@@ -87,6 +88,10 @@ if [ ! -x $h5cc110 ]; then
 fi
 if [ ! -x $h5cc112 ]; then
     echo "h5cc112($h5cc112) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc114 ]; then
+    echo "h5cc114($h5cc114) not found or not executable.  Abort"
     exit 1
 fi
 if [ ! -x $h5ccdev ]; then
@@ -156,6 +161,22 @@ read112()
         ./a.out 2>/dev/null
     else
         echo "messed up compiling read_compat.c with v1.12"
+    fi
+}
+
+#### Read with v1.14 ####
+read114()
+{
+    $h5cc114 -DH5_USE_16_API read_compat.c
+    if [ $? -eq 0 ]
+    then
+        echo >> errors.log
+        echo >> errors.log
+        echo "========= Reading with v1.14 =========" >> errors.log
+        echo >> errors.log
+        ./a.out 2>/dev/null
+    else
+        echo "messed up compiling read_compat.c with v1.14"
     fi
 }
 
@@ -234,6 +255,22 @@ read_ref_compat_112()
         ./a.out 2>/dev/null
     else
         echo "messed up compiling read_ref_compat.c with v1.12"
+    fi
+}
+
+#### Read with v1.14 ####
+read_ref_compat_114()
+{
+    $h5cc114 -DH5_USE_16_API read_ref_compat.c
+    if [ $? -eq 0 ]
+    then
+        echo >> errors.log
+        echo >> errors.log
+        echo "========= Reading with v1.14 =========" >> errors.log
+        echo >> errors.log
+        ./a.out 2>/dev/null
+    else
+        echo "messed up compiling read_ref_compat.c with v1.14"
     fi
 }
 
@@ -350,6 +387,7 @@ RunTest()
     read18
     read110
     read112
+    read114
     readdev
     CheckErrors $1
     rm errors.log
@@ -379,6 +417,7 @@ Run_ref_compat_Test()
     read_ref_compat_18
     read_ref_compat_110
     read_ref_compat_112
+    read_ref_compat_114
     read_ref_compat_dev
     if [ "$CC" = "$h5cc18" -o "$CC" = "$h5cc110" ]; then
         CheckErrors $11

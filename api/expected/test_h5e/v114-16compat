@@ -1,0 +1,7 @@
+H5E_auto_t_vers = 1
+H5Eclear_vers = 1
+H5Eget_auto_vers = 1
+H5Eprint_vers = 1
+H5Epush_vers = 1
+H5Eset_auto_vers = 1
+H5Ewalk_vers = 1
