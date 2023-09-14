@@ -115,7 +115,7 @@ CHECK()
             else
                 echo "*FAILED*"
                 echo "!!! Error: There was an error running this test !!!"
-                echo " The file containing expected output did not exist"
+                echo " The file $expected containing expected output did not exist"
                 echo
 
                 CLEANUP
@@ -198,8 +198,8 @@ TEST()
     TESTING "normal 1.12.x library build"
     BUILD "$h5cc112 $compile_options" $testname "v112-actual"
 
-    TESTING "normal 1.13.x library build"
-    BUILD "$h5ccdev $compile_options" $testname "vdev-actual"
+    TESTING "normal 1.14.x library build"
+    BUILD "$h5cc114 $compile_options" $testname "v114-actual"
 
     TESTING "1.8.x library built in 1.6.x compatibility mode"
     BUILD "$h5cc18compat $compile_options" $testname "v18-compat"
@@ -237,28 +237,52 @@ TEST()
     TESTING "normal 1.12.x library build, with 1.10.x compatibility macro"
     BUILD "$h5cc112 -DH5_USE_110_API $compile_options" $testname "v112-110macro"
 
-    TESTING "1.13.x library built in 1.6.x compatibility mode"
+    TESTING "1.14.x library built in 1.6.x compatibility mode"
+    BUILD "$h5cc114compat16 $compile_options" $testname "v114-16compat"
+
+    TESTING "normal 1.14.x library build, with 1.6.x compatibility macro"
+    BUILD "$h5cc114 -DH5_USE_16_API $compile_options" $testname "v114-16macro"
+
+    TESTING "1.14.x library built in 1.8.x compatibility mode"
+    BUILD "$h5cc114compat18 $compile_options" $testname "v114-18compat"
+
+    TESTING "normal 1.14.x library build, with 1.8.x compatibility macro"
+    BUILD "$h5cc114 -DH5_USE_18_API $compile_options" $testname "v114-18macro"
+
+    TESTING "1.14.x library built in 1.10.x compatibility mode"
+    BUILD "$h5cc114compat110 $compile_options" $testname "v114-110compat"
+
+    TESTING "normal 1.14.x library build, with 1.10.x compatibility macro"
+    BUILD "$h5cc114 -DH5_USE_110_API $compile_options" $testname "v114-110macro"
+
+    TESTING "1.14.x library built in 1.12.x compatibility mode"
+    BUILD "$h5cc114compat112 $compile_options" $testname "v114-112compat"
+
+    TESTING "normal 1.14.x library build, with 1.12.x compatibility macro"
+    BUILD "$h5cc114 -DH5_USE_112_API $compile_options" $testname "v114-112macro"
+
+    TESTING "1.15.x library built in 1.6.x compatibility mode"
     BUILD "$h5ccdevcompat16 $compile_options" $testname "vdev-16compat"
 
-    TESTING "normal 1.13.x library build, with 1.6.x compatibility macro"
+    TESTING "normal 1.15.x library build, with 1.6.x compatibility macro"
     BUILD "$h5ccdev -DH5_USE_16_API $compile_options" $testname "vdev-16macro"
 
-    TESTING "1.13.x library built in 1.8.x compatibility mode"
+    TESTING "1.15.x library built in 1.8.x compatibility mode"
     BUILD "$h5ccdevcompat18 $compile_options" $testname "vdev-18compat"
 
-    TESTING "normal 1.13.x library build, with 1.8.x compatibility macro"
+    TESTING "normal 1.15.x library build, with 1.8.x compatibility macro"
     BUILD "$h5ccdev -DH5_USE_18_API $compile_options" $testname "vdev-18macro"
 
-    TESTING "1.13.x library built in 1.10.x compatibility mode"
+    TESTING "1.15.x library built in 1.10.x compatibility mode"
     BUILD "$h5ccdevcompat110 $compile_options" $testname "vdev-110compat"
 
-    TESTING "normal 1.13.x library build, with 1.10.x compatibility macro"
+    TESTING "normal 1.15.x library build, with 1.10.x compatibility macro"
     BUILD "$h5ccdev -DH5_USE_110_API $compile_options" $testname "vdev-110macro"
 
-    TESTING "1.13.x library built in 1.12.x compatibility mode"
+    TESTING "1.15.x library built in 1.12.x compatibility mode"
     BUILD "$h5ccdevcompat112 $compile_options" $testname "vdev-112compat"
 
-    TESTING "normal 1.13.x library build, with 1.12.x compatibility macro"
+    TESTING "normal 1.15.x library build, with 1.12.x compatibility macro"
     BUILD "$h5ccdev -DH5_USE_112_API $compile_options" $testname "vdev-112macro"
 }
 
@@ -307,6 +331,20 @@ TESTAPI112()
 # Build test program with different API routine versions overridden
 #
 TESTAPI114()
+{
+    # Create aliases for the parameters
+    testname=$1
+    compile_options=$2
+    suffix=$3
+    compat_options=$4
+
+    TESTING "normal 1.14.x, with: $compat_options"
+    BUILD "$h5cc114 $compat_options $compile_options" $testname "v114-$suffix"
+}
+
+# Build test program with different API routine versions overridden
+#
+TESTAPI116()
 {
     # Create aliases for the parameters
     testname=$1
@@ -573,6 +611,11 @@ h5ccdevcompat16="/mnt/scr1/pre-release/hdf5/vdev/compat16/$HOST_NAME/bin/h5cc"
 h5ccdevcompat18="/mnt/scr1/pre-release/hdf5/vdev/compat18/$HOST_NAME/bin/h5cc"
 h5ccdevcompat110="/mnt/scr1/pre-release/hdf5/vdev/compat110/$HOST_NAME/bin/h5cc"
 h5ccdevcompat112="/mnt/scr1/pre-release/hdf5/vdev/compat112/$HOST_NAME/bin/h5cc"
+h5cc114="/mnt/scr1/pre-release/hdf5/v114/$HOST_NAME/bin/h5cc"
+h5cc114compat16="/mnt/scr1/pre-release/hdf5/v114/compat16/$HOST_NAME/bin/h5cc"
+h5cc114compat18="/mnt/scr1/pre-release/hdf5/v114/compat18/$HOST_NAME/bin/h5cc"
+h5cc114compat110="/mnt/scr1/pre-release/hdf5/v114/compat110/$HOST_NAME/bin/h5cc"
+h5cc114compat112="/mnt/scr1/pre-release/hdf5/v114/compat112/$HOST_NAME/bin/h5cc"
 h5cc112="/mnt/scr1/pre-release/hdf5/v112/$HOST_NAME/bin/h5cc"
 h5cc112compat16="/mnt/scr1/pre-release/hdf5/v112/compat16/$HOST_NAME/bin/h5cc"
 h5cc112compat18="/mnt/scr1/pre-release/hdf5/v112/compat18/$HOST_NAME/bin/h5cc"
@@ -631,12 +674,33 @@ if [ ! -x $h5ccdevcompat16 ]; then
     exit 1
 fi
 
+if [ ! -x $h5cc114 ]; then
+    echo "h5cc114($h5cc114) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc114compat112 ]; then
+    echo "h5cc114compat112($h5cc114compat112) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc114compat110 ]; then
+    echo "h5cc114compat110($h5cc114compat110) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc114compat18 ]; then
+    echo "h5cc114compat18($h5cc114compat18) not found or not executable.  Abort"
+    exit 1
+fi
+if [ ! -x $h5cc114compat16 ]; then
+    echo "h5cc114compat16($h5cc114compat16) not found or not executable.  Abort"
+    exit 1
+fi
+
 if [ ! -x $h5cc112 ]; then
     echo "h5cc112($h5cc112) not found or not executable.  Abort"
     exit 1
 fi
-if [ ! -x $h5ccdevcompat112 ]; then
-    echo "h5ccdevcompat112($h5ccdevcompat112) not found or not executable.  Abort"
+if [ ! -x $h5cc112compat110 ]; then
+    echo "h5cc112compat110($h5cc112compat110) not found or not executable.  Abort"
     exit 1
 fi
 if [ ! -x $h5cc112compat18 ]; then
@@ -682,6 +746,11 @@ echo "h5ccdevcompat112 = $h5ccdevcompat112"
 echo "h5ccdevcompat110 = $h5ccdevcompat110"
 echo "h5ccdevcompat18 = $h5ccdevcompat18"
 echo "h5ccdevcompat16 = $h5ccdevcompat16"
+echo "h5cc114 = $h5cc114"
+echo "h5cc114compat112 = $h5cc114compat112"
+echo "h5cc114compat110 = $h5cc114compat110"
+echo "h5cc114compat18 = $h5cc114compat18"
+echo "h5cc114compat16 = $h5cc114compat16"
 echo "h5cc112 = $h5cc112"
 echo "h5cc112compat110 = $h5cc112compat110"
 echo "h5cc112compat18 = $h5cc112compat18"
